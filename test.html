@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
-        /* جميع الأنماط الأصلية مع إضافات بسيطة لأزرار التعديل */
         * {
             margin: 0;
             padding: 0;
@@ -19,12 +18,8 @@
             color: #1e2a1f;
             transition: all 0.3s;
         }
-        body[dir="ltr"] {
-            text-align: left;
-        }
-        body[dir="rtl"] {
-            text-align: right;
-        }
+        body[dir="ltr"] { text-align: left; }
+        body[dir="rtl"] { text-align: right; }
 
         header {
             background: white;
@@ -46,16 +41,8 @@
             background-clip: text;
             color: transparent;
         }
-        .logo p {
-            font-size: 0.75rem;
-            color: #6c757d;
-            margin-top: 4px;
-        }
-        .header-actions {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
+        .logo p { font-size: 0.75rem; color: #6c757d; margin-top: 4px; }
+        .header-actions { display: flex; gap: 20px; align-items: center; }
         .icon-btn {
             background: none;
             border: none;
@@ -64,10 +51,6 @@
             color: #93C572;
             transition: all 0.2s;
             position: relative;
-        }
-        .icon-btn:hover {
-            transform: translateY(-2px);
-            color: #6b9c4a;
         }
         .cart-count {
             background: #93C572;
@@ -81,10 +64,7 @@
             min-width: 20px;
             text-align: center;
         }
-        .lang-switch {
-            display: flex;
-            gap: 6px;
-        }
+        .lang-switch { display: flex; gap: 6px; }
         .lang-btn {
             background: transparent;
             border: 1.5px solid #93C572;
@@ -95,10 +75,7 @@
             font-weight: 600;
             transition: 0.2s;
         }
-        .lang-btn.active {
-            background: #93C572;
-            color: white;
-        }
+        .lang-btn.active { background: #93C572; color: white; }
         .exit-btn {
             background: #f8f9fa;
             border: 1px solid #ddd;
@@ -106,11 +83,6 @@
             border-radius: 40px;
             cursor: pointer;
             font-weight: 500;
-            transition: 0.2s;
-            margin-left: 10px;
-        }
-        .exit-btn:hover {
-            background: #e9ecef;
         }
         .dev-toolbar {
             display: flex;
@@ -131,9 +103,7 @@
             align-items: center;
             gap: 6px;
         }
-        .dev-btn:hover {
-            background: #6fa44c;
-        }
+        .dev-btn:hover { background: #6fa44c; }
         .edit-icon {
             background: #ffc107;
             color: #1e2a1f;
@@ -145,15 +115,19 @@
             margin-right: 8px;
             transition: 0.2s;
         }
-        .edit-icon:hover {
-            background: #e0a800;
+        .delete-icon {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.2s;
         }
+        .edit-icon:hover, .delete-icon:hover { opacity: 0.8; }
 
-        .container {
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 20px 24px;
-        }
+        .container { max-width: 1440px; margin: 0 auto; padding: 20px 24px; }
         .status-banner {
             background: #f9fafb;
             padding: 12px 20px;
@@ -162,16 +136,9 @@
             margin-bottom: 28px;
             border-right: 5px solid #93C572;
         }
-        .status-banner.closed {
-            background: #fff5f5;
-            border-right-color: #e74c3c;
-        }
+        .status-banner.closed { background: #fff5f5; border-right-color: #e74c3c; }
 
-        .swiper {
-            width: 100%;
-            padding: 0;
-            border-radius: 28px;
-        }
+        .swiper { width: 100%; border-radius: 28px; }
         .category-card {
             width: 100%;
             height: 80vh;
@@ -188,9 +155,7 @@
             object-fit: cover;
             transition: transform 0.5s;
         }
-        .category-card:hover .category-img {
-            transform: scale(1.03);
-        }
+        .category-card:hover .category-img { transform: scale(1.03); }
         .category-title {
             position: absolute;
             bottom: 30px;
@@ -206,10 +171,7 @@
             align-items: center;
             gap: 8px;
         }
-        body[dir="rtl"] .category-title {
-            left: auto;
-            right: 30px;
-        }
+        body[dir="rtl"] .category-title { left: auto; right: 30px; }
 
         .products-grid {
             display: grid;
@@ -255,12 +217,8 @@
             font-weight: 500;
             z-index: 2;
         }
-        .product-badge-status.available {
-            background: #93C572;
-        }
-        .product-badge-status.unavailable {
-            background: #e74c3c;
-        }
+        .product-badge-status.available { background: #93C572; }
+        .product-badge-status.unavailable { background: #e74c3c; }
         .product-name-badge {
             position: absolute;
             top: 12px;
@@ -288,9 +246,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        .size-selector {
-            flex: 1;
-        }
+        .size-selector { flex: 1; }
         .size-selector select {
             width: 100%;
             padding: 8px 12px;
@@ -298,7 +254,6 @@
             border-radius: 24px;
             background: white;
             font-size: 0.85rem;
-            cursor: pointer;
         }
         .quantity-control-new {
             display: flex;
@@ -316,7 +271,6 @@
             border-radius: 50%;
             font-size: 1.2rem;
             cursor: pointer;
-            transition: 0.2s;
             color: #93C572;
             font-weight: bold;
         }
@@ -369,7 +323,6 @@
             border-radius: 28px;
             z-index: 3;
         }
-
         .category-products-page {
             display: none;
             padding: 20px 24px;
@@ -392,7 +345,6 @@
             border-radius: 50%;
             font-size: 1.3rem;
             cursor: pointer;
-            transition: 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -406,7 +358,19 @@
             align-items: center;
             gap: 12px;
         }
-
+        .add-product-btn {
+            background: #93C572;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
         .cart-drawer {
             position: fixed;
             top: 0;
@@ -420,9 +384,7 @@
             padding: 24px;
             overflow-y: auto;
         }
-        .cart-drawer.open {
-            right: 0;
-        }
+        .cart-drawer.open { right: 0; }
         .cart-overlay {
             position: fixed;
             top: 0;
@@ -434,7 +396,6 @@
             display: none;
             backdrop-filter: blur(2px);
         }
-
         .modal {
             display: none;
             position: fixed;
@@ -475,7 +436,6 @@
             transition: 0.08s linear;
             width: 100%;
         }
-
         footer {
             background: #fafcf8;
             padding: 48px 24px;
@@ -496,13 +456,8 @@
             cursor: pointer;
             padding: 8px 12px;
             border-radius: 48px;
-            transition: 0.2s;
         }
-        .footer-item i {
-            font-size: 1.6rem;
-            color: #93C572;
-            transition: transform 0.2s;
-        }
+        .footer-item i { font-size: 1.6rem; color: #93C572; }
         .loading {
             position: fixed;
             top: 0;
@@ -520,7 +475,6 @@
             flex-direction: column;
             gap: 20px;
             backdrop-filter: blur(4px);
-            transition: opacity 0.3s;
         }
         @media (max-width: 768px) {
             .cart-drawer { width: 100%; right: -100%; }
@@ -546,7 +500,6 @@
         <div class="header-actions" id="headerActions"></div>
     </header>
 
-    <!-- واجهة الزبون الرئيسية (البطاقات المتحركة) -->
     <div id="customerView">
         <div class="container">
             <div id="statusBanner"></div>
@@ -558,26 +511,19 @@
         </div>
     </div>
 
-    <!-- صفحة المنتجات الجديدة لكل صنف -->
     <div id="categoryProductsPage" class="category-products-page">
         <div class="page-header">
-            <button class="close-products-btn" id="closeProductsPageBtn">
-                <i class="fas fa-times"></i>
-            </button>
+            <button class="close-products-btn" id="closeProductsPageBtn"><i class="fas fa-times"></i></button>
             <h2 id="categoryPageTitle" class="page-title"></h2>
-            <div style="width: 44px;"></div>
+            <div id="addProductBtnContainer" style="width: 44px;"></div>
         </div>
         <div class="products-grid" id="productsGridNew"></div>
     </div>
 
-    <!-- واجهة المطبخ (تبقى كما هي) -->
     <div id="kitchenView" style="display: none;">
-        <div class="container">
-            <div id="kitchenPanelContent"></div>
-        </div>
+        <div class="container"><div id="kitchenPanelContent"></div></div>
     </div>
 
-    <!-- عناصر مشتركة -->
     <div class="cart-overlay" id="cartOverlay"></div>
     <div class="cart-drawer" id="cartDrawer">
         <h3>🛒 سلة الطلبات</h3>
@@ -616,33 +562,22 @@
         </div>
     </div>
 
-    <!-- نوافذ تعديل للمطور -->
-    <div class="modal" id="editCategoryModal">
+    <!-- Modal إضافة/تعديل المنتج -->
+    <div class="modal" id="productFormModal">
         <div class="modal-content">
-            <h3>تعديل الفئة</h3>
-            <input type="text" id="editCatNameAr" placeholder="الاسم عربي">
-            <input type="text" id="editCatNameFr" placeholder="الاسم فرنسي">
-            <input type="text" id="editCatNameEn" placeholder="الاسم إنجليزي">
-            <input type="text" id="editCatImage" placeholder="رابط الصورة">
-            <button id="saveCategoryChanges" class="btn-3d">حفظ</button>
-            <button id="closeEditCategory" class="btn-3d" style="background:#6c757d;">إلغاء</button>
+            <h3 id="productFormTitle">إضافة منتج جديد</h3>
+            <input type="text" id="prodNameAr" placeholder="الاسم بالعربية" required>
+            <input type="text" id="prodNameFr" placeholder="الاسم بالفرنسية" required>
+            <input type="text" id="prodNameEn" placeholder="الاسم بالإنجليزية" required>
+            <input type="text" id="prodPrice" placeholder="السعر (MAD)" required>
+            <input type="text" id="prodImage" placeholder="رابط الصورة" required>
+            <label><input type="checkbox" id="prodAvailable" checked> متوفر</label>
+            <button id="saveProductBtn" class="btn-3d">حفظ</button>
+            <button id="closeProductForm" class="btn-3d" style="background:#6c757d;">إلغاء</button>
         </div>
     </div>
 
-    <div class="modal" id="editProductModal">
-        <div class="modal-content">
-            <h3>تعديل المنتج</h3>
-            <input type="text" id="editProdNameAr" placeholder="الاسم عربي">
-            <input type="text" id="editProdNameFr" placeholder="الاسم فرنسي">
-            <input type="text" id="editProdNameEn" placeholder="الاسم إنجليزي">
-            <input type="text" id="editProdPrice" placeholder="السعر">
-            <input type="text" id="editProdImage" placeholder="رابط الصورة">
-            <label><input type="checkbox" id="editProdAvailable"> متوفر</label>
-            <button id="saveProductChanges" class="btn-3d">حفظ</button>
-            <button id="closeEditProduct" class="btn-3d" style="background:#6c757d;">إلغاء</button>
-        </div>
-    </div>
-
+    <!-- Modal إدارة الأحجام -->
     <div class="modal" id="manageSizesModal">
         <div class="modal-content" id="sizesModalContent">
             <h3>إدارة الأحجام</h3>
@@ -663,7 +598,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        // ========== JSONBin ==========
+        // JSONBin config
         const BIN_ID = '69b99a0aaa77b81da9f2cebf';
         const API_KEY = '$2a$10$HIZoab3tTM/2LPQAVLeK3.1P.PYxBVAFKNpWMtQOcJq/QfC3Z7/le';
         const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
@@ -773,7 +708,6 @@
                 navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
                 speed: 600
             });
-
             document.querySelectorAll('.category-card').forEach(card => {
                 card.addEventListener('click', (e) => {
                     if (e.target.closest('.edit-category')) return;
@@ -781,7 +715,6 @@
                     if (categoryId) showCategoryProducts(categoryId);
                 });
             });
-
             if (isDevMode) {
                 document.querySelectorAll('.edit-category').forEach(btn => {
                     btn.addEventListener('click', (e) => {
@@ -795,140 +728,140 @@
 
         function openEditCategoryModal(idx) {
             const cat = categories[idx];
-            document.getElementById('editCatNameAr').value = cat.name_ar;
-            document.getElementById('editCatNameFr').value = cat.name_fr;
-            document.getElementById('editCatNameEn').value = cat.name_en;
-            document.getElementById('editCatImage').value = cat.image;
-            const modal = document.getElementById('editCategoryModal');
-            modal.style.display = 'flex';
-            modal.setAttribute('data-edit-idx', idx);
-        }
-
-        document.getElementById('saveCategoryChanges').onclick = () => {
-            const idx = document.getElementById('editCategoryModal').getAttribute('data-edit-idx');
-            if (idx !== null) {
-                categories[idx].name_ar = document.getElementById('editCatNameAr').value;
-                categories[idx].name_fr = document.getElementById('editCatNameFr').value;
-                categories[idx].name_en = document.getElementById('editCatNameEn').value;
-                categories[idx].image = document.getElementById('editCatImage').value;
-                renderCategories();
-                if (currentCategoryId && document.getElementById('categoryProductsPage').style.display === 'block') {
-                    showCategoryProducts(currentCategoryId);
-                }
+            const newNameAr = prompt("الاسم بالعربية:", cat.name_ar);
+            if (newNameAr !== null) cat.name_ar = newNameAr;
+            const newNameFr = prompt("الاسم بالفرنسية:", cat.name_fr);
+            if (newNameFr !== null) cat.name_fr = newNameFr;
+            const newNameEn = prompt("الاسم بالإنجليزية:", cat.name_en);
+            if (newNameEn !== null) cat.name_en = newNameEn;
+            const newImage = prompt("رابط الصورة:", cat.image);
+            if (newImage !== null) cat.image = newImage;
+            renderCategories();
+            if (currentCategoryId && document.getElementById('categoryProductsPage').style.display === 'block') {
+                showCategoryProducts(currentCategoryId);
             }
-            document.getElementById('editCategoryModal').style.display = 'none';
-        };
-        document.getElementById('closeEditCategory').onclick = () => document.getElementById('editCategoryModal').style.display = 'none';
+        }
 
         function showCategoryProducts(categoryId) {
             currentCategoryId = categoryId;
             const category = categories.find(c => c.id === categoryId);
             if (!category) return;
-            document.getElementById('categoryPageTitle').innerHTML = `${t(category)} ${isDevMode ? `<button class="edit-icon edit-category-page" data-id="${categoryId}"><i class="fas fa-pencil-alt"></i></button>` : ''}`;
+            document.getElementById('categoryPageTitle').innerHTML = t(category);
+            const addBtnContainer = document.getElementById('addProductBtnContainer');
             if (isDevMode) {
-                const editBtn = document.querySelector('.edit-category-page');
-                if (editBtn) {
-                    editBtn.onclick = () => {
-                        const idx = categories.findIndex(c => c.id === categoryId);
-                        if (idx !== -1) openEditCategoryModal(idx);
-                    };
-                }
+                addBtnContainer.innerHTML = `<button class="add-product-btn" id="addNewProductBtn"><i class="fas fa-plus"></i> إضافة منتج</button>`;
+                document.getElementById('addNewProductBtn').onclick = () => openProductForm(null);
+            } else {
+                addBtnContainer.innerHTML = '';
             }
             const productList = productsData[categoryId] || [];
             const grid = document.getElementById('productsGridNew');
             grid.innerHTML = '';
-            if (productList.length === 0) {
+            if (productList.length === 0 && !isDevMode) {
                 grid.innerHTML = '<div style="text-align:center; padding:40px;">لا توجد منتجات في هذه الفئة حالياً</div>';
-            } else {
-                productList.forEach((prod, idx) => {
-                    const productAvailable = prod.available && restaurantOpen;
-                    const card = document.createElement('div');
-                    card.className = 'product-card-new';
-                    card.setAttribute('data-product-idx', idx);
-                    card.setAttribute('data-category', categoryId);
-                    const statusText = prod.available ? (restaurantOpen ? "متوفر" : "المطعم مغلق") : "غير متوفر";
-                    const statusClass = (prod.available && restaurantOpen) ? "available" : "unavailable";
-                    card.innerHTML = `
-                        <div class="product-img-container">
-                            <img class="product-img-new" src="${prod.image}" alt="${t(prod)}" loading="lazy">
-                            <div class="product-badge-status ${statusClass}">${statusText}</div>
-                            <div class="product-name-badge">
-                                ${t(prod)}
-                                ${isDevMode ? `<button class="edit-icon edit-product" data-cat="${categoryId}" data-idx="${idx}"><i class="fas fa-pencil-alt"></i></button>` : ''}
-                            </div>
-                        </div>
-                        <div class="product-details">
-                            <div class="size-quantity-row">
-                                <div class="size-selector">
-                                    <select class="size-select" data-idx="${idx}" data-cat="${categoryId}">
-                                        ${sizes.map(size => `<option value="${size.id}" data-extra="${size.priceExtra}">${t(size)} +${size.priceExtra} MAD</option>`).join('')}
-                                    </select>
-                                </div>
-                                <div class="quantity-control-new">
-                                    <button class="qty-minus" data-idx="${idx}" data-cat="${categoryId}">-</button>
-                                    <span class="qty-value" id="qty-${categoryId}-${idx}">1</span>
-                                    <button class="qty-plus" data-idx="${idx}" data-cat="${categoryId}">+</button>
-                                </div>
-                            </div>
-                            <div class="order-price-row">
-                                <button class="order-btn add-to-cart-new" data-idx="${idx}" data-cat="${categoryId}">
-                                    <i class="fas fa-shopping-cart"></i> طلب
-                                </button>
-                                <div class="product-price-new" id="price-${categoryId}-${idx}">${prod.price} MAD</div>
-                            </div>
-                        </div>
-                    `;
-                    if (!productAvailable && !isDevMode) {
-                        const overlay = document.createElement('div');
-                        overlay.className = 'product-unavailable-overlay';
-                        overlay.innerText = prod.available ? "المطعم مغلق حالياً" : "غير متوفر";
-                        card.appendChild(overlay);
-                    }
-                    grid.appendChild(card);
-                    
-                    const qtySpan = document.getElementById(`qty-${categoryId}-${idx}`);
-                    const priceSpan = document.getElementById(`price-${categoryId}-${idx}`);
-                    const sizeSelect = card.querySelector('.size-select');
-                    const updatePriceDisplay = () => {
-                        const basePrice = parseFloat(prod.price) || 0;
-                        const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
-                        const extra = parseFloat(selectedOption?.getAttribute('data-extra')) || 0;
-                        const qty = parseInt(qtySpan.innerText);
-                        const total = (basePrice + extra) * qty;
-                        priceSpan.innerText = total + " MAD";
-                    };
-                    card.querySelector('.qty-minus').addEventListener('click', () => {
-                        let qty = parseInt(qtySpan.innerText);
-                        if (qty > 1) qtySpan.innerText = qty - 1;
-                        updatePriceDisplay();
-                    });
-                    card.querySelector('.qty-plus').addEventListener('click', () => {
-                        let qty = parseInt(qtySpan.innerText);
-                        qtySpan.innerText = qty + 1;
-                        updatePriceDisplay();
-                    });
-                    sizeSelect.addEventListener('change', updatePriceDisplay);
-                    updatePriceDisplay();
-                    const addBtn = card.querySelector('.add-to-cart-new');
-                    addBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        if (!restaurantOpen) { alert("المطعم مغلق حالياً"); return; }
-                        if (!prod.available) { alert("هذا المنتج غير متوفر"); return; }
-                        const qty = parseInt(qtySpan.innerText);
-                        const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
-                        const sizeId = selectedOption.value;
-                        const selectedSize = sizes.find(s => s.id === sizeId);
-                        addToCartWithDetails(prod, qty, selectedSize, "");
-                    });
-                });
             }
+            productList.forEach((prod, idx) => {
+                const productAvailable = prod.available && restaurantOpen;
+                const card = document.createElement('div');
+                card.className = 'product-card-new';
+                card.setAttribute('data-product-idx', idx);
+                card.setAttribute('data-category', categoryId);
+                const statusText = prod.available ? (restaurantOpen ? "متوفر" : "المطعم مغلق") : "غير متوفر";
+                const statusClass = (prod.available && restaurantOpen) ? "available" : "unavailable";
+                card.innerHTML = `
+                    <div class="product-img-container">
+                        <img class="product-img-new" src="${prod.image}" alt="${t(prod)}" loading="lazy">
+                        <div class="product-badge-status ${statusClass}">${statusText}</div>
+                        <div class="product-name-badge">
+                            ${t(prod)}
+                            ${isDevMode ? `<button class="edit-icon edit-product" data-cat="${categoryId}" data-idx="${idx}"><i class="fas fa-pencil-alt"></i></button>` : ''}
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <div class="size-quantity-row">
+                            <div class="size-selector">
+                                <select class="size-select" data-idx="${idx}" data-cat="${categoryId}">
+                                    ${sizes.map(size => `<option value="${size.id}" data-extra="${size.priceExtra}">${t(size)} +${size.priceExtra} MAD</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="quantity-control-new">
+                                <button class="qty-minus" data-idx="${idx}" data-cat="${categoryId}">-</button>
+                                <span class="qty-value" id="qty-${categoryId}-${idx}">1</span>
+                                <button class="qty-plus" data-idx="${idx}" data-cat="${categoryId}">+</button>
+                            </div>
+                        </div>
+                        <div class="order-price-row">
+                            <button class="order-btn add-to-cart-new" data-idx="${idx}" data-cat="${categoryId}">
+                                <i class="fas fa-shopping-cart"></i> طلب
+                            </button>
+                            <div class="product-price-new" id="price-${categoryId}-${idx}">
+                                ${prod.price} MAD
+                                ${isDevMode ? `<button class="delete-icon delete-product" data-cat="${categoryId}" data-idx="${idx}"><i class="fas fa-trash-alt"></i></button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                if (!productAvailable && !isDevMode) {
+                    const overlay = document.createElement('div');
+                    overlay.className = 'product-unavailable-overlay';
+                    overlay.innerText = prod.available ? "المطعم مغلق حالياً" : "غير متوفر";
+                    card.appendChild(overlay);
+                }
+                grid.appendChild(card);
+                
+                const qtySpan = document.getElementById(`qty-${categoryId}-${idx}`);
+                const priceSpan = document.getElementById(`price-${categoryId}-${idx}`);
+                const sizeSelect = card.querySelector('.size-select');
+                const updatePriceDisplay = () => {
+                    const basePrice = parseFloat(prod.price) || 0;
+                    const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+                    const extra = parseFloat(selectedOption?.getAttribute('data-extra')) || 0;
+                    const qty = parseInt(qtySpan.innerText);
+                    const total = (basePrice + extra) * qty;
+                    priceSpan.innerHTML = `${total} MAD ${isDevMode ? `<button class="delete-icon delete-product" data-cat="${categoryId}" data-idx="${idx}"><i class="fas fa-trash-alt"></i></button>` : ''}`;
+                };
+                card.querySelector('.qty-minus').addEventListener('click', () => {
+                    let qty = parseInt(qtySpan.innerText);
+                    if (qty > 1) qtySpan.innerText = qty - 1;
+                    updatePriceDisplay();
+                });
+                card.querySelector('.qty-plus').addEventListener('click', () => {
+                    let qty = parseInt(qtySpan.innerText);
+                    qtySpan.innerText = qty + 1;
+                    updatePriceDisplay();
+                });
+                sizeSelect.addEventListener('change', updatePriceDisplay);
+                updatePriceDisplay();
+                const addBtn = card.querySelector('.add-to-cart-new');
+                addBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!restaurantOpen) { alert("المطعم مغلق حالياً"); return; }
+                    if (!prod.available) { alert("هذا المنتج غير متوفر"); return; }
+                    const qty = parseInt(qtySpan.innerText);
+                    const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+                    const sizeId = selectedOption.value;
+                    const selectedSize = sizes.find(s => s.id === sizeId);
+                    addToCartWithDetails(prod, qty, selectedSize, "");
+                });
+            });
             if (isDevMode) {
                 document.querySelectorAll('.edit-product').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const catId = btn.getAttribute('data-cat');
                         const idx = btn.getAttribute('data-idx');
-                        openEditProductModal(catId, idx);
+                        openProductForm({ catId, idx });
+                    });
+                });
+                document.querySelectorAll('.delete-product').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const catId = btn.getAttribute('data-cat');
+                        const idx = btn.getAttribute('data-idx');
+                        if (confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+                            productsData[catId].splice(idx, 1);
+                            showCategoryProducts(catId);
+                        }
                     });
                 });
             }
@@ -937,36 +870,62 @@
             document.getElementById('kitchenView').style.display = 'none';
         }
 
-        function openEditProductModal(catId, prodIdx) {
-            const prod = productsData[catId][prodIdx];
-            document.getElementById('editProdNameAr').value = prod.name_ar;
-            document.getElementById('editProdNameFr').value = prod.name_fr;
-            document.getElementById('editProdNameEn').value = prod.name_en;
-            document.getElementById('editProdPrice').value = prod.price;
-            document.getElementById('editProdImage').value = prod.image;
-            document.getElementById('editProdAvailable').checked = prod.available;
-            const modal = document.getElementById('editProductModal');
+        function openProductForm(editData) {
+            const modal = document.getElementById('productFormModal');
+            const title = document.getElementById('productFormTitle');
+            if (editData) {
+                const prod = productsData[editData.catId][editData.idx];
+                document.getElementById('prodNameAr').value = prod.name_ar;
+                document.getElementById('prodNameFr').value = prod.name_fr;
+                document.getElementById('prodNameEn').value = prod.name_en;
+                document.getElementById('prodPrice').value = prod.price;
+                document.getElementById('prodImage').value = prod.image;
+                document.getElementById('prodAvailable').checked = prod.available;
+                title.innerText = "تعديل المنتج";
+                modal.setAttribute('data-edit-cat', editData.catId);
+                modal.setAttribute('data-edit-idx', editData.idx);
+            } else {
+                document.getElementById('prodNameAr').value = '';
+                document.getElementById('prodNameFr').value = '';
+                document.getElementById('prodNameEn').value = '';
+                document.getElementById('prodPrice').value = '';
+                document.getElementById('prodImage').value = '';
+                document.getElementById('prodAvailable').checked = true;
+                title.innerText = "إضافة منتج جديد";
+                modal.removeAttribute('data-edit-cat');
+                modal.removeAttribute('data-edit-idx');
+            }
             modal.style.display = 'flex';
-            modal.setAttribute('data-cat', catId);
-            modal.setAttribute('data-idx', prodIdx);
         }
 
-        document.getElementById('saveProductChanges').onclick = () => {
-            const modal = document.getElementById('editProductModal');
-            const catId = modal.getAttribute('data-cat');
-            const prodIdx = modal.getAttribute('data-idx');
-            if (catId && prodIdx) {
-                productsData[catId][prodIdx].name_ar = document.getElementById('editProdNameAr').value;
-                productsData[catId][prodIdx].name_fr = document.getElementById('editProdNameFr').value;
-                productsData[catId][prodIdx].name_en = document.getElementById('editProdNameEn').value;
-                productsData[catId][prodIdx].price = document.getElementById('editProdPrice').value;
-                productsData[catId][prodIdx].image = document.getElementById('editProdImage').value;
-                productsData[catId][prodIdx].available = document.getElementById('editProdAvailable').checked;
-                if (currentCategoryId === catId) showCategoryProducts(catId);
+        document.getElementById('saveProductBtn').onclick = () => {
+            const modal = document.getElementById('productFormModal');
+            const catId = currentCategoryId;
+            if (!catId) return;
+            const newProduct = {
+                name_ar: document.getElementById('prodNameAr').value,
+                name_fr: document.getElementById('prodNameFr').value,
+                name_en: document.getElementById('prodNameEn').value,
+                price: document.getElementById('prodPrice').value,
+                image: document.getElementById('prodImage').value,
+                available: document.getElementById('prodAvailable').checked
+            };
+            if (modal.hasAttribute('data-edit-cat')) {
+                const editCat = modal.getAttribute('data-edit-cat');
+                const editIdx = parseInt(modal.getAttribute('data-edit-idx'));
+                if (editCat === catId) {
+                    productsData[catId][editIdx] = newProduct;
+                } else {
+                    productsData[editCat][editIdx] = newProduct;
+                }
+            } else {
+                if (!productsData[catId]) productsData[catId] = [];
+                productsData[catId].push(newProduct);
             }
             modal.style.display = 'none';
+            showCategoryProducts(catId);
         };
-        document.getElementById('closeEditProduct').onclick = () => document.getElementById('editProductModal').style.display = 'none';
+        document.getElementById('closeProductForm').onclick = () => document.getElementById('productFormModal').style.display = 'none';
 
         function openManageSizes() {
             const modal = document.getElementById('manageSizesModal');
