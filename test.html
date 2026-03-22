@@ -173,46 +173,167 @@
             right: 30px;
         }
 
+        /* تصميم بطاقات المنتجات الجديد حسب المواصفات */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 28px;
             margin-top: 40px;
         }
-        .product-card {
+        .product-card-new {
             background: white;
             border-radius: 28px;
             overflow: hidden;
             box-shadow: 0 8px 20px rgba(0,0,0,0.06);
             transition: all 0.3s;
-            cursor: pointer;
             border: 1px solid #f0f0f0;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
-        .product-card:hover {
-            transform: rotateY(4deg) rotateX(2deg) scale(1.02);
+        .product-card-new:hover {
+            transform: translateY(-5px);
             box-shadow: 0 20px 32px rgba(0,0,0,0.12);
         }
-        .product-img {
+        .product-img-container {
+            position: relative;
             width: 100%;
-            height: 220px;
-            object-fit: cover;
+            padding-top: 100%; /* نسبة 1:1 لتوسط الصورة */
+            overflow: hidden;
             background: #fafafa;
         }
-        .product-info {
-            padding: 18px;
+        .product-img-new {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
-        .product-name {
-            font-size: 1.25rem;
+        .product-badge-status {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            z-index: 2;
+        }
+        .product-badge-status.available {
+            background: #93C572;
+        }
+        .product-badge-status.unavailable {
+            background: #e74c3c;
+        }
+        .product-name-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(255,255,255,0.95);
+            color: #1e2a1f;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
             font-weight: 700;
-            margin-bottom: 8px;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        .product-price {
+        .product-details {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .size-quantity-row {
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .size-selector {
+            flex: 1;
+        }
+        .size-selector select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            background: white;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .quantity-control-new {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8f9fa;
+            border-radius: 40px;
+            padding: 4px 8px;
+        }
+        .quantity-control-new button {
+            background: white;
+            border: 1px solid #dee2e6;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.2s;
             color: #93C572;
-            font-weight: 800;
-            margin: 10px 0;
+            font-weight: bold;
         }
-        .product-unavailable {
+        .quantity-control-new button:hover {
+            background: #93C572;
+            color: white;
+            border-color: #93C572;
+        }
+        .quantity-control-new span {
+            min-width: 30px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .order-price-row {
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+        .order-btn {
+            background: #93C572;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #5e8b3e;
+            transition: 0.08s linear;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            flex: 1;
+        }
+        .order-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #5e8b3e;
+        }
+        .product-price-new {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #93C572;
+            background: #f0f7ec;
+            padding: 6px 12px;
+            border-radius: 40px;
+            min-width: 80px;
+            text-align: center;
+        }
+        .product-unavailable-overlay {
             background: rgba(0,0,0,0.65);
             position: absolute;
             top: 0;
@@ -226,22 +347,47 @@
             font-weight: bold;
             backdrop-filter: blur(4px);
             border-radius: 28px;
+            z-index: 3;
         }
-        .btn-3d {
-            background: #93C572;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 40px;
-            color: white;
-            font-weight: 700;
+
+        /* صفحة المنتجات الجديدة */
+        .category-products-page {
+            display: none;
+            padding: 20px 24px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .close-products-btn {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 1.3rem;
             cursor: pointer;
-            box-shadow: 0 5px 0 #5e8b3e;
-            transition: 0.08s linear;
-            width: 100%;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
         }
-        .btn-3d:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #5e8b3e;
+        .close-products-btn:hover {
+            background: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #93C572;
         }
 
         .cart-drawer {
@@ -300,27 +446,21 @@
             border: 1px solid #e2e8f0;
             border-radius: 24px;
         }
-        input:focus {
-            border-color: #93C572;
-            outline: none;
-        }
-        .size-option {
-            margin: 8px 0;
-        }
-        .quantity-control {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin: 15px 0;
-        }
-        .quantity-control button {
-            background: #f0f0f0;
+        .btn-3d {
+            background: #93C572;
             border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-size: 1.2rem;
+            padding: 10px 18px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 700;
             cursor: pointer;
+            box-shadow: 0 5px 0 #5e8b3e;
+            transition: 0.08s linear;
+            width: 100%;
+        }
+        .btn-3d:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #5e8b3e;
         }
 
         footer {
@@ -372,15 +512,13 @@
             backdrop-filter: blur(4px);
             transition: opacity 0.3s;
         }
-        .loading span {
-            font-size: 1rem;
-            color: #6c757d;
-            font-weight: normal;
-        }
+
         @media (max-width: 768px) {
             .cart-drawer { width: 100%; right: -100%; }
             .category-title { font-size: 1.3rem; bottom: 16px; left: 16px; padding: 8px 20px; }
             .category-card { height: 60vh; }
+            .products-grid { grid-template-columns: 1fr; }
+            .size-quantity-row { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
@@ -398,7 +536,7 @@
         <div class="header-actions" id="headerActions"></div>
     </header>
 
-    <!-- واجهة الزبون -->
+    <!-- واجهة الزبون الرئيسية (البطاقات المتحركة) -->
     <div id="customerView">
         <div class="container">
             <div id="statusBanner"></div>
@@ -407,11 +545,19 @@
                 <div class="swiper-button-next" style="color:#93C572;"></div>
                 <div class="swiper-button-prev" style="color:#93C572;"></div>
             </div>
-            <div id="productsSection" style="display: none;">
-                <h2 id="categoryTitle" style="margin: 20px 0 10px; font-size: 1.9rem;"></h2>
-                <div class="products-grid" id="productsGrid"></div>
-            </div>
         </div>
+    </div>
+
+    <!-- صفحة المنتجات الجديدة لكل صنف -->
+    <div id="categoryProductsPage" class="category-products-page">
+        <div class="page-header">
+            <button class="close-products-btn" id="closeProductsPageBtn">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 id="categoryPageTitle" class="page-title"></h2>
+            <div style="width: 44px;"></div> <!-- للحفاظ على التوازن -->
+        </div>
+        <div class="products-grid" id="productsGridNew"></div>
     </div>
 
     <!-- واجهة المطور -->
@@ -467,24 +613,6 @@
         </div>
     </div>
 
-    <!-- Modal تفاصيل المنتج -->
-    <div class="modal" id="productDetailModal">
-        <div class="modal-content">
-            <h2 id="modalProductName"></h2>
-            <img id="modalProductImage" style="width:100%; border-radius:20px; margin:15px 0;" alt="">
-            <p id="modalProductPrice" class="product-price"></p>
-            <div id="sizeContainer"></div>
-            <div class="quantity-control">
-                <button id="decrementQty">-</button>
-                <span id="modalQuantity">1</span>
-                <button id="incrementQty">+</button>
-            </div>
-            <textarea id="modalSpecialRequest" placeholder="طلب خاص (مثل بدون ثلج، صوص جانب...)" rows="2"></textarea>
-            <button id="modalAddToCart" class="btn-3d">➕ إضافة للسلة</button>
-            <button id="closeModal" class="btn-3d" style="background:#6c757d; box-shadow:0 5px 0 #4a5568; margin-top:10px;">إغلاق</button>
-        </div>
-    </div>
-
     <footer>
         <div class="footer-content">
             <div class="footer-item" data-action="phone"><i class="fas fa-phone-alt"></i><span>اتصل بنا</span></div>
@@ -529,28 +657,21 @@
             { id: "tacos_geant", name_ar: "طاكوس عملاق", name_fr: "Tacos Géant", name_en: "Giant Tacos", image: "https://placehold.co/1200x800/FFFFFF/93C572?text=Giant+Tacos" }
         ];
 
-        // هنا يتم وضع كافة المنتجات (تم اختصارها للعرض ولكنها موجودة كاملة في الملف النهائي)
+        // منتجات تجريبية للعصائر والبرغر (يمكن إضافة الباقي بنفس الهيكل)
         let productsData = {
-            rayeb: [
-                { name_ar: "الرايب البلدي بالسكر", name_fr: "Rayeb nature avec sucre", name_en: "Rayeb with sugar", price: "", available: true, image: "https://placehold.co/400x300/FFFFFF/93C572?text=Rayeb+Sugar" },
-                // ... باقي المنتجات (10 منتجات)
+            jus: [
+                { name_ar: "عصير البرتقال", name_fr: "Jus d'orange", name_en: "Orange Juice", price: "15", available: true, image: "https://placehold.co/400x400/FFA500/FFFFFF?text=Orange+Juice" },
+                { name_ar: "عصير الليمون", name_fr: "Jus de citron", name_en: "Lemon Juice", price: "12", available: true, image: "https://placehold.co/400x400/FFF200/000000?text=Lemon+Juice" },
+                { name_ar: "كوكتيل فواكه", name_fr: "Cocktail de fruits", name_en: "Fruit Cocktail", price: "20", available: true, image: "https://placehold.co/400x400/FF6B6B/FFFFFF?text=Fruit+Cocktail" },
+                { name_ar: "عصير الفراولة", name_fr: "Jus de fraise", name_en: "Strawberry Juice", price: "18", available: false, image: "https://placehold.co/400x400/FF4D4D/FFFFFF?text=Strawberry" }
             ],
-            salade: [ /* 3 */ ],
-            pizza: [ /* 9 */ ],
-            jus: [ /* 13 */ ],
-            tacos: [ /* 4 */ ],
-            tacos_fr: [ /* 6 */ ],
-            burger: [ /* 3 */ ],
-            mokataa: [ /* 4 */ ],
-            panini: [ /* 7 */ ],
-            plats: [ /* 4 */ ],
-            frites: [ /* 8 */ ],
-            shakes: [ /* 4 */ ],
-            ma9ila: [ /* 4 */ ],
-            sandwich: [ /* 8 */ ],
-            tacos_geant: [ /* 5 */ ]
+            burger: [
+                { name_ar: "برغر كلاسيك", name_fr: "Burger Classique", name_en: "Classic Burger", price: "35", available: true, image: "https://placehold.co/400x400/D2691E/FFFFFF?text=Classic+Burger" },
+                { name_ar: "برغر دجاج", name_fr: "Burger Poulet", name_en: "Chicken Burger", price: "40", available: true, image: "https://placehold.co/400x400/F4A460/FFFFFF?text=Chicken+Burger" },
+                { name_ar: "برغر مزدوج", name_fr: "Double Burger", name_en: "Double Burger", price: "55", available: true, image: "https://placehold.co/400x400/CD853F/FFFFFF?text=Double+Burger" }
+            ],
+            rayeb: [], salade: [], pizza: [], tacos: [], tacos_fr: [], mokataa: [], panini: [], plats: [], frites: [], shakes: [], ma9ila: [], sandwich: [], tacos_geant: []
         };
-        // (في الملف الفعلي سيتم تضمين جميع المنتجات بالكامل)
 
         let currentLang = 'ar';
         let cart = [];
@@ -559,9 +680,9 @@
         let deliveryAvailable = true;
         let currentCategoryId = null;
         let categorySwiper = null;
-        let currentProductDetail = null;
 
         function t(obj) {
+            if (!obj) return "";
             if (currentLang === 'ar') return obj.name_ar;
             if (currentLang === 'fr') return obj.name_fr;
             return obj.name_en;
@@ -611,119 +732,143 @@
                 navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
                 speed: 600
             });
-        }
 
-        function showProducts(categoryId) {
-            currentCategoryId = categoryId;
-            const productList = productsData[categoryId];
-            if (!productList) return;
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = '';
-            productList.forEach((prod, idx) => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.setAttribute('data-product-idx', idx);
-                card.innerHTML = `
-                    <img class="product-img" src="${prod.image}" alt="${t(prod)}" loading="lazy">
-                    <div class="product-info">
-                        <div class="product-name">${t(prod)}</div>
-                        <div class="product-price">${prod.price ? prod.price + ' MAD' : '—'}</div>
-                        <button class="btn-3d add-to-cart" data-idx="${idx}">➕ أضف للسلة</button>
-                    </div>
-                `;
-                if (!prod.available) {
-                    card.style.opacity = '0.65';
-                    const unavailableDiv = document.createElement('div');
-                    unavailableDiv.className = 'product-unavailable';
-                    unavailableDiv.innerText = 'غير متوفر حالياً';
-                    card.appendChild(unavailableDiv);
-                }
-                grid.appendChild(card);
-            });
-            document.getElementById('productsSection').style.display = 'block';
-            document.getElementById('categoryTitle').innerHTML = t(categories.find(c => c.id === categoryId));
-            document.querySelectorAll('.add-to-cart').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const idx = btn.getAttribute('data-idx');
-                    const product = productList[idx];
-                    if (product.available && restaurantOpen) {
-                        addToCart(product, 1, null, "");
-                    } else if (!restaurantOpen) alert("المطعم مغلق");
-                    else alert("المنتج غير متوفر");
-                });
-            });
-            document.querySelectorAll('.product-card').forEach(card => {
+            // إضافة حدث النقر على البطاقات
+            document.querySelectorAll('.category-card').forEach(card => {
                 card.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('add-to-cart')) return;
-                    const idx = card.getAttribute('data-product-idx');
-                    const product = productList[idx];
-                    if (product.available && restaurantOpen) {
-                        showProductDetails(product, categoryId);
-                    } else if (!restaurantOpen) alert("المطعم مغلق");
-                    else alert("المنتج غير متوفر");
+                    const categoryId = card.getAttribute('data-category');
+                    if (categoryId) showCategoryProducts(categoryId);
                 });
             });
         }
 
-        function showProductDetails(product, categoryId) {
-            if (!product.available) {
-                alert("هذا المنتج غير متوفر حالياً");
-                return;
+        function showCategoryProducts(categoryId) {
+            currentCategoryId = categoryId;
+            const category = categories.find(c => c.id === categoryId);
+            if (!category) return;
+            document.getElementById('categoryPageTitle').innerText = t(category);
+            const productList = productsData[categoryId] || [];
+            const grid = document.getElementById('productsGridNew');
+            grid.innerHTML = '';
+
+            if (productList.length === 0) {
+                grid.innerHTML = '<div style="text-align:center; padding:40px;">لا توجد منتجات في هذه الفئة حالياً</div>';
+            } else {
+                productList.forEach((prod, idx) => {
+                    const productAvailable = prod.available && restaurantOpen;
+                    const card = document.createElement('div');
+                    card.className = 'product-card-new';
+                    card.setAttribute('data-product-idx', idx);
+                    card.setAttribute('data-category', categoryId);
+                    
+                    // تحديد حالة المنتج
+                    const statusText = prod.available ? (restaurantOpen ? "متوفر" : "المطعم مغلق") : "غير متوفر";
+                    const statusClass = (prod.available && restaurantOpen) ? "available" : "unavailable";
+                    
+                    card.innerHTML = `
+                        <div class="product-img-container">
+                            <img class="product-img-new" src="${prod.image}" alt="${t(prod)}" loading="lazy">
+                            <div class="product-badge-status ${statusClass}">${statusText}</div>
+                            <div class="product-name-badge">${t(prod)}</div>
+                        </div>
+                        <div class="product-details">
+                            <div class="size-quantity-row">
+                                <div class="size-selector">
+                                    <select class="size-select" data-idx="${idx}" data-cat="${categoryId}">
+                                        ${sizes.map(size => `<option value="${size.id}" data-extra="${size.priceExtra}">${t(size)} +${size.priceExtra} MAD</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div class="quantity-control-new">
+                                    <button class="qty-minus" data-idx="${idx}" data-cat="${categoryId}">-</button>
+                                    <span class="qty-value" id="qty-${categoryId}-${idx}">1</span>
+                                    <button class="qty-plus" data-idx="${idx}" data-cat="${categoryId}">+</button>
+                                </div>
+                            </div>
+                            <div class="order-price-row">
+                                <button class="order-btn add-to-cart-new" data-idx="${idx}" data-cat="${categoryId}">
+                                    <i class="fas fa-shopping-cart"></i> طلب
+                                </button>
+                                <div class="product-price-new" id="price-${categoryId}-${idx}">${prod.price} MAD</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    if (!productAvailable) {
+                        const overlay = document.createElement('div');
+                        overlay.className = 'product-unavailable-overlay';
+                        overlay.innerText = prod.available ? "المطعم مغلق حالياً" : "غير متوفر";
+                        card.appendChild(overlay);
+                    }
+                    
+                    grid.appendChild(card);
+                    
+                    // إضافة الأحداث بعد إضافة العنصر للDOM
+                    const qtySpan = document.getElementById(`qty-${categoryId}-${idx}`);
+                    const priceSpan = document.getElementById(`price-${categoryId}-${idx}`);
+                    const sizeSelect = card.querySelector('.size-select');
+                    
+                    const updatePriceDisplay = () => {
+                        const basePrice = parseFloat(prod.price) || 0;
+                        const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+                        const extra = parseFloat(selectedOption?.getAttribute('data-extra')) || 0;
+                        const qty = parseInt(qtySpan.innerText);
+                        const total = (basePrice + extra) * qty;
+                        priceSpan.innerText = total + " MAD";
+                    };
+                    
+                    const qtyMinus = card.querySelector('.qty-minus');
+                    const qtyPlus = card.querySelector('.qty-plus');
+                    
+                    qtyMinus.addEventListener('click', () => {
+                        let qty = parseInt(qtySpan.innerText);
+                        if (qty > 1) qtySpan.innerText = qty - 1;
+                        updatePriceDisplay();
+                    });
+                    
+                    qtyPlus.addEventListener('click', () => {
+                        let qty = parseInt(qtySpan.innerText);
+                        qtySpan.innerText = qty + 1;
+                        updatePriceDisplay();
+                    });
+                    
+                    sizeSelect.addEventListener('change', updatePriceDisplay);
+                    updatePriceDisplay();
+                    
+                    const addBtn = card.querySelector('.add-to-cart-new');
+                    addBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (!restaurantOpen) { alert("المطعم مغلق حالياً"); return; }
+                        if (!prod.available) { alert("هذا المنتج غير متوفر"); return; }
+                        const qty = parseInt(qtySpan.innerText);
+                        const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+                        const sizeId = selectedOption.value;
+                        const selectedSize = sizes.find(s => s.id === sizeId);
+                        addToCartWithDetails(prod, qty, selectedSize, "");
+                    });
+                });
             }
-            currentProductDetail = { ...product, categoryId };
-            document.getElementById('modalProductName').innerText = t(product);
-            document.getElementById('modalProductImage').src = product.image;
-            const basePrice = parseFloat(product.price) || 0;
-            document.getElementById('modalProductPrice').innerText = basePrice + " MAD";
-            const sizeContainer = document.getElementById('sizeContainer');
-            sizeContainer.innerHTML = '';
-            sizes.forEach(size => {
-                const totalPrice = basePrice + size.priceExtra;
-                const div = document.createElement('div');
-                div.className = 'size-option';
-                div.innerHTML = `
-                    <label>
-                        <input type="radio" name="size" value="${size.id}" data-extra="${size.priceExtra}">
-                        ${t(size)} - ${totalPrice} MAD
-                    </label>
-                `;
-                sizeContainer.appendChild(div);
-            });
-            const firstRadio = document.querySelector('input[name="size"]');
-            if (firstRadio) firstRadio.checked = true;
-            document.getElementById('modalQuantity').innerText = '1';
-            document.getElementById('modalSpecialRequest').value = '';
-            document.getElementById('productDetailModal').style.display = 'flex';
+            
+            document.getElementById('customerView').style.display = 'none';
+            document.getElementById('categoryProductsPage').style.display = 'block';
+            document.getElementById('devView').style.display = 'none';
+            document.getElementById('kitchenView').style.display = 'none';
         }
 
-        function addToCart(product, quantity = 1, selectedSize = null, special = "") {
+        function addToCartWithDetails(product, quantity, selectedSize, special) {
             let finalPrice = parseFloat(product.price) || 0;
             if (selectedSize) finalPrice += selectedSize.priceExtra;
+            finalPrice = finalPrice * quantity;
             const cartItem = {
                 ...product,
                 quantity: quantity,
                 size: selectedSize ? { ...selectedSize } : null,
                 specialRequest: special,
-                finalPrice: finalPrice
+                finalPrice: finalPrice / quantity,
+                totalPrice: finalPrice
             };
             cart.push(cartItem);
             updateCartUI();
-        }
-
-        function addFromModal() {
-            const product = currentProductDetail;
-            if (!product) return;
-            const quantity = parseInt(document.getElementById('modalQuantity').innerText);
-            const special = document.getElementById('modalSpecialRequest').value;
-            let selectedSize = null;
-            const selectedRadio = document.querySelector('input[name="size"]:checked');
-            if (selectedRadio) {
-                const sizeId = selectedRadio.value;
-                selectedSize = sizes.find(s => s.id === sizeId);
-            }
-            addToCart(product, quantity, selectedSize, special);
-            document.getElementById('productDetailModal').style.display = 'none';
+            alert(`تمت إضافة ${quantity} × ${t(product)} إلى السلة`);
         }
 
         function updateCartUI() {
@@ -732,21 +877,22 @@
             let total = 0;
             cartDiv.innerHTML = '';
             cart.forEach((item, idx) => {
-                const price = item.finalPrice;
-                total += price * item.quantity;
+                const itemTotal = item.finalPrice * item.quantity;
+                total += itemTotal;
                 cartDiv.innerHTML += `
                     <div style="display:flex; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid #eee; padding:8px 0;">
                         <div>
                             <strong>${t(item)}</strong> x ${item.quantity}<br>
                             ${item.size ? t(item.size) : ''} ${item.specialRequest ? `<br><small>${item.specialRequest}</small>` : ''}
                         </div>
-                        <div>${price * item.quantity} MAD</div>
+                        <div>${itemTotal} MAD</div>
                         <button class="remove-item" data-idx="${idx}" style="background:#e74c3c; color:white; border:none; border-radius:20px; padding:4px 10px;">✖</button>
                     </div>
                 `;
             });
             totalSpan.innerText = `المجموع: ${total} MAD`;
-            document.getElementById('cartCount').innerText = cart.length;
+            const cartCountSpan = document.getElementById('cartCount');
+            if (cartCountSpan) cartCountSpan.innerText = cart.length;
             document.querySelectorAll('.remove-item').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const idx = btn.getAttribute('data-idx');
@@ -769,7 +915,9 @@
             document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.lang-btn[data-lang="${lang}"]`).classList.add('active');
             renderCategories();
-            if (currentCategoryId) showProducts(currentCategoryId);
+            if (currentCategoryId && document.getElementById('categoryProductsPage').style.display === 'block') {
+                showCategoryProducts(currentCategoryId);
+            }
         }
 
         function renderDevPanel() {
@@ -781,7 +929,7 @@
                 <h3>إدارة المنتجات</h3><div id="productsManagement"></div>
                 <h3>صور الفئات</h3><div id="categoriesManagement"></div>
                 </div>`;
-            // إدارة الأحجام
+            // إدارة الأحجام (مبسطة)
             const sizesDiv = document.getElementById('sizesManagement');
             sizesDiv.innerHTML = '';
             sizes.forEach((size, idx) => {
@@ -821,7 +969,7 @@
                 saveToCloud();
                 renderDevPanel();
             };
-            // إدارة المنتجات (مختصرة ولكنها موجودة في الكود النهائي)
+            // إدارة المنتجات (مبسطة)
             const prodMgmt = document.getElementById('productsManagement');
             prodMgmt.innerHTML = '';
             for (let catId in productsData) {
@@ -839,7 +987,6 @@
                             <strong>${t(prod)}</strong><br>
                             السعر: <input type="text" value="${prod.price}" class="prod-price" data-cat="${catId}" data-idx="${idx}" style="width:80px;"> MAD<br>
                             رابط الصورة: <input type="text" value="${prod.image}" class="prod-image" data-cat="${catId}" data-idx="${idx}" style="width:70%;"><br>
-                            <button class="update-prod-img" data-cat="${catId}" data-idx="${idx}">تحديث الصورة</button>
                             <button class="toggle-avail" data-cat="${catId}" data-idx="${idx}">${prod.available ? 'تعطيل' : 'تفعيل'}</button>
                         </div>
                     `;
@@ -856,14 +1003,12 @@
                     </div>
                 `;
             });
-            // إضافة أحداث للمنتجات
             document.querySelectorAll('.prod-price').forEach(inp => {
                 inp.onchange = () => {
                     const cat = inp.getAttribute('data-cat');
                     const idx = inp.getAttribute('data-idx');
                     productsData[cat][idx].price = inp.value;
                     saveToCloud();
-                    if (currentCategoryId === cat) showProducts(cat);
                 };
             });
             document.querySelectorAll('.toggle-avail').forEach(btn => {
@@ -873,19 +1018,6 @@
                     productsData[cat][idx].available = !productsData[cat][idx].available;
                     saveToCloud();
                     renderDevPanel();
-                    if (currentCategoryId === cat) showProducts(cat);
-                };
-            });
-            document.querySelectorAll('.update-prod-img').forEach(btn => {
-                btn.onclick = () => {
-                    const cat = btn.getAttribute('data-cat');
-                    const idx = btn.getAttribute('data-idx');
-                    const imgInput = document.querySelector(`.prod-image[data-cat="${cat}"][data-idx="${idx}"]`);
-                    if (imgInput) {
-                        productsData[cat][idx].image = imgInput.value;
-                        saveToCloud();
-                        if (currentCategoryId === cat) showProducts(cat);
-                    }
                 };
             });
             document.querySelectorAll('.update-cat-img').forEach(btn => {
@@ -938,6 +1070,7 @@
 
         function showCustomerView() {
             document.getElementById('customerView').style.display = 'block';
+            document.getElementById('categoryProductsPage').style.display = 'none';
             document.getElementById('devView').style.display = 'none';
             document.getElementById('kitchenView').style.display = 'none';
             const headerActions = document.getElementById('headerActions');
@@ -952,12 +1085,12 @@
             `;
             attachCustomerEvents();
             renderCategories();
-            if (currentCategoryId) showProducts(currentCategoryId);
             updateStatusBanner();
         }
 
         function showDevView() {
             document.getElementById('customerView').style.display = 'none';
+            document.getElementById('categoryProductsPage').style.display = 'none';
             document.getElementById('devView').style.display = 'block';
             document.getElementById('kitchenView').style.display = 'none';
             const headerActions = document.getElementById('headerActions');
@@ -968,6 +1101,7 @@
 
         function showKitchenView() {
             document.getElementById('customerView').style.display = 'none';
+            document.getElementById('categoryProductsPage').style.display = 'none';
             document.getElementById('devView').style.display = 'none';
             document.getElementById('kitchenView').style.display = 'block';
             const headerActions = document.getElementById('headerActions');
@@ -1051,16 +1185,12 @@
             });
         }
 
-        document.getElementById('decrementQty').onclick = () => {
-            let qty = parseInt(document.getElementById('modalQuantity').innerText);
-            if (qty > 1) document.getElementById('modalQuantity').innerText = qty - 1;
+        document.getElementById('closeProductsPageBtn').onclick = () => {
+            document.getElementById('categoryProductsPage').style.display = 'none';
+            document.getElementById('customerView').style.display = 'block';
+            currentCategoryId = null;
+            if (categorySwiper) categorySwiper.update();
         };
-        document.getElementById('incrementQty').onclick = () => {
-            let qty = parseInt(document.getElementById('modalQuantity').innerText);
-            document.getElementById('modalQuantity').innerText = qty + 1;
-        };
-        document.getElementById('modalAddToCart').onclick = addFromModal;
-        document.getElementById('closeModal').onclick = () => document.getElementById('productDetailModal').style.display = 'none';
 
         window.addEventListener('hashchange', handleRoute);
         window.addEventListener('load', async () => {
