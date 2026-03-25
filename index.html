@@ -1027,6 +1027,8 @@
         let categorySwiper = null;
         let isDevMode = false;
 
+        let syncInterval = null; // for periodic sync
+
         function t(obj) {
             if (!obj) return "";
             if (currentLang === 'ar') return obj.name_ar;
@@ -1034,15 +1036,57 @@
             return obj.name_en;
         }
 
-        async function saveToCloud() {
-            const payload = { categories, products: productsData, sizes, restaurantOpen, deliveryAvailable };
+        // Save full data (including orders) to JSONBin
+        async function saveFullToCloud() {
+            const payload = { 
+                categories, 
+                products: productsData, 
+                sizes, 
+                restaurantOpen, 
+                deliveryAvailable,
+                orders: orders
+            };
             try {
-                await fetch(BASE_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY }, body: JSON.stringify(payload) });
-                alert("✅ تم حفظ التغييرات بنجاح");
-            } catch(e) { console.warn(e); alert("❌ فشل الحفظ، تحقق من الاتصال"); }
+                await fetch(BASE_URL, { 
+                    method: 'PUT', 
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'X-Master-Key': API_KEY 
+                    }, 
+                    body: JSON.stringify(payload) 
+                });
+                console.log("✅ تم حفظ جميع البيانات (بما فيها الطلبات) بنجاح");
+            } catch(e) { 
+                console.warn(e); 
+                alert("❌ فشل الحفظ، تحقق من الاتصال"); 
+            }
         }
 
-        async function loadFromCloud() {
+        // Save only orders to cloud (use when orders change)
+        async function saveOrdersToCloud() {
+            try {
+                // First get current full record to avoid overwriting other fields
+                const res = await fetch(BASE_URL, { headers: { 'X-Master-Key': API_KEY } });
+                const data = await res.json();
+                const currentRecord = data.record || {};
+                currentRecord.orders = orders;
+                await fetch(BASE_URL, { 
+                    method: 'PUT', 
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'X-Master-Key': API_KEY 
+                    }, 
+                    body: JSON.stringify(currentRecord) 
+                });
+                console.log("✅ تم حفظ الطلبات في السحاب");
+            } catch(e) { 
+                console.warn(e); 
+                alert("❌ فشل حفظ الطلبات"); 
+            }
+        }
+
+        // Load full data from cloud (including orders)
+        async function loadFullFromCloud() {
             try {
                 const res = await fetch(BASE_URL, { headers: { 'X-Master-Key': API_KEY } });
                 const data = await res.json();
@@ -1052,8 +1096,86 @@
                     if (data.record.sizes) sizes = data.record.sizes;
                     if (typeof data.record.restaurantOpen !== 'undefined') restaurantOpen = data.record.restaurantOpen;
                     if (typeof data.record.deliveryAvailable !== 'undefined') deliveryAvailable = data.record.deliveryAvailable;
+                    if (data.record.orders) orders = data.record.orders;
                 }
             } catch(e) { console.warn(e); }
+        }
+
+        // Sync orders from cloud (pull latest)
+        async function syncOrdersFromCloud() {
+            try {
+                const res = await fetch(BASE_URL, { headers: { 'X-Master-Key': API_KEY } });
+                const data = await res.json();
+                if (data.record && data.record.orders) {
+                    orders = data.record.orders;
+                    // Update UI if needed
+                    if (document.getElementById('kitchenView').style.display !== 'none') {
+                        renderKitchenPanel();
+                    }
+                    // Update tracking modal if open
+                    const trackingModal = document.getElementById('trackingModal');
+                    if (trackingModal.style.display === 'flex') {
+                        const currentOrderId = document.getElementById('trackOrderId').innerText;
+                        const updatedOrder = orders.find(o => o.id == currentOrderId);
+                        if (updatedOrder) {
+                            const statusMap = {
+                                'received': 'تم الاستلام',
+                                'preparing': 'قيد التجهيز',
+                                'waiting': 'لم يصل دورك',
+                                'ready': 'جاهز'
+                            };
+                            document.getElementById('trackStatus').innerText = statusMap[updatedOrder.status] || updatedOrder.status;
+                            if (updatedOrder.estimatedTime) {
+                                const timeDiv = document.querySelector('#trackingModal .modal-content div:first-of-type');
+                                if (!document.getElementById('estimatedTimeDisplay')) {
+                                    const timeDisplay = document.createElement('div');
+                                    timeDisplay.id = 'estimatedTimeDisplay';
+                                    timeDisplay.style.marginTop = '10px';
+                                    timeDisplay.style.padding = '8px';
+                                    timeDisplay.style.background = '#e8f5e9';
+                                    timeDisplay.style.borderRadius = '20px';
+                                    timeDisplay.innerHTML = `⏱️ الوقت المتوقع: ${updatedOrder.estimatedTime} دقيقة`;
+                                    timeDiv.parentNode.insertBefore(timeDisplay, timeDiv.nextSibling);
+                                } else {
+                                    document.getElementById('estimatedTimeDisplay').innerHTML = `⏱️ الوقت المتوقع: ${updatedOrder.estimatedTime} دقيقة`;
+                                }
+                            }
+                            if (updatedOrder.notificationMessage) {
+                                const msgDiv = document.getElementById('notificationMessage');
+                                if (msgDiv) {
+                                    msgDiv.innerText = updatedOrder.notificationMessage;
+                                    msgDiv.style.display = 'block';
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch(e) { console.warn("خطأ في مزامنة الطلبات", e); }
+        }
+
+        // Function to start periodic sync (call when customer or kitchen view is active)
+        function startSync() {
+            if (syncInterval) clearInterval(syncInterval);
+            syncInterval = setInterval(() => {
+                syncOrdersFromCloud();
+            }, 5000); // every 5 seconds
+        }
+
+        function stopSync() {
+            if (syncInterval) {
+                clearInterval(syncInterval);
+                syncInterval = null;
+            }
+        }
+
+        // Modify saveToCloud to also save orders (backward compatibility)
+        async function saveToCloud() {
+            await saveFullToCloud();
+        }
+
+        // After loading, call loadFullFromCloud
+        async function loadFromCloud() {
+            await loadFullFromCloud();
         }
 
         function renderCategories() {
@@ -1114,6 +1236,7 @@
             if (currentCategoryId && document.getElementById('categoryProductsPage').style.display === 'block') {
                 showCategoryProducts(currentCategoryId);
             }
+            saveToCloud();
         }
 
         function showCategoryProducts(categoryId) {
@@ -1238,8 +1361,44 @@
                 updatePriceDisplay();
             });
 
-            // REMOVED direct per-button event listeners – they are now handled globally
-            // We'll add a global document listener for add-to-cart buttons later
+            // Global event listener for add-to-cart buttons
+            document.addEventListener('click', (e) => {
+                const addBtn = e.target.closest('.add-to-cart-new');
+                if (!addBtn) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (!restaurantOpen) {
+                    alert("المطعم مغلق حالياً");
+                    return;
+                }
+
+                const catId = addBtn.getAttribute('data-cat');
+                const idx = addBtn.getAttribute('data-idx');
+                if (!catId || idx === null) return;
+
+                const prod = productsData[catId] ? productsData[catId][parseInt(idx)] : null;
+                if (!prod) return;
+
+                if (!prod.available) {
+                    alert("هذا المنتج غير متوفر");
+                    return;
+                }
+
+                const card = addBtn.closest('.product-card-new');
+                if (!card) return;
+
+                const qtySpan = card.querySelector('.qty-value');
+                const sizeSelect = card.querySelector('.size-select');
+                if (!qtySpan || !sizeSelect) return;
+
+                const qty = parseInt(qtySpan.innerText);
+                const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+                const sizeId = selectedOption.value;
+                const selectedSize = sizes.find(s => s.id === sizeId);
+
+                addToCartWithDetails(prod, qty, selectedSize, "");
+            });
 
             if (isDevMode) {
                 document.querySelectorAll('.edit-product').forEach(btn => {
@@ -1258,6 +1417,7 @@
                         if (confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
                             productsData[catId].splice(idx, 1);
                             showCategoryProducts(catId);
+                            saveToCloud();
                         }
                     });
                 });
@@ -1266,49 +1426,6 @@
             document.getElementById('categoryProductsPage').style.display = 'block';
             document.getElementById('kitchenView').style.display = 'none';
         }
-
-        // Global event listener for add-to-cart buttons (works for all devices, including mobile)
-        document.addEventListener('click', (e) => {
-            const addBtn = e.target.closest('.add-to-cart-new');
-            if (!addBtn) return;
-            e.preventDefault();
-            e.stopPropagation();
-
-            // Check if restaurant is open
-            if (!restaurantOpen) {
-                alert("المطعم مغلق حالياً");
-                return;
-            }
-
-            // Get product details from button attributes
-            const catId = addBtn.getAttribute('data-cat');
-            const idx = addBtn.getAttribute('data-idx');
-            if (!catId || idx === null) return;
-
-            const prod = productsData[catId] ? productsData[catId][parseInt(idx)] : null;
-            if (!prod) return;
-
-            if (!prod.available) {
-                alert("هذا المنتج غير متوفر");
-                return;
-            }
-
-            // Get the product card
-            const card = addBtn.closest('.product-card-new');
-            if (!card) return;
-
-            // Get quantity and size
-            const qtySpan = card.querySelector('.qty-value');
-            const sizeSelect = card.querySelector('.size-select');
-            if (!qtySpan || !sizeSelect) return;
-
-            const qty = parseInt(qtySpan.innerText);
-            const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
-            const sizeId = selectedOption.value;
-            const selectedSize = sizes.find(s => s.id === sizeId);
-
-            addToCartWithDetails(prod, qty, selectedSize, "");
-        });
 
         function openProductForm(editData) {
             const modal = document.getElementById('productFormModal');
@@ -1364,6 +1481,7 @@
             }
             modal.style.display = 'none';
             showCategoryProducts(catId);
+            saveToCloud();
         };
         document.getElementById('closeProductForm').onclick = () => document.getElementById('productFormModal').style.display = 'none';
 
@@ -1398,6 +1516,7 @@
                         const idx = parseInt(btn.getAttribute('data-idx'));
                         sizes.splice(idx, 1);
                         renderSizesList();
+                        saveToCloud();
                     };
                 });
             }
@@ -1405,6 +1524,7 @@
             document.getElementById('addNewSizeBtn').onclick = () => {
                 sizes.push({ id: "new" + Date.now(), name_ar: "جديد", name_fr: "Nouveau", name_en: "New", priceExtra: 0 });
                 renderSizesList();
+                saveToCloud();
             };
             modal.style.display = 'flex';
         }
@@ -1493,6 +1613,7 @@
             renderCategories();
             updateStatusBanner();
             requestNotificationPermission();
+            startSync(); // start periodic sync to see order updates
         }
 
         function showDevView() {
@@ -1517,7 +1638,7 @@
             attachCustomerEvents();
             renderCategories();
             updateStatusBanner();
-            document.getElementById('saveDevChangesBtn').onclick = () => saveToCloud();
+            document.getElementById('saveDevChangesBtn').onclick = () => saveFullToCloud();
             document.getElementById('manageSizesBtn').onclick = () => openManageSizes();
             document.getElementById('exitDevModeBtn').onclick = () => {
                 if (confirm("هل تريد الخروج من وضع المطور؟")) {
@@ -1526,6 +1647,7 @@
                 }
             };
             requestNotificationPermission();
+            startSync();
         }
 
         function showKitchenView() {
@@ -1537,6 +1659,7 @@
             headerActions.innerHTML = `<button class="exit-btn" id="exitKitchenBtn"><i class="fas fa-arrow-left"></i> العودة للرئيسية</button>`;
             document.getElementById('exitKitchenBtn').onclick = () => { window.location.hash = 'customer'; };
             renderKitchenPanel();
+            startSync(); // start periodic sync to see new orders and updates
         }
 
         function renderKitchenPanel() {
@@ -1607,7 +1730,7 @@
                 };
             });
             document.querySelectorAll('.status-btn').forEach(btn => {
-                btn.onclick = () => {
+                btn.onclick = async () => {
                     const id = btn.getAttribute('data-id');
                     const newStatus = btn.getAttribute('data-status');
                     const order = orders.find(o => o.id == id);
@@ -1631,22 +1754,13 @@
                                 });
                             }
                             order.notificationMessage = message;
-                            localStorage.setItem('orders', JSON.stringify(orders));
-                            const trackingModal = document.getElementById('trackingModal');
-                            if (trackingModal.style.display === 'flex') {
-                                const currentOrderId = document.getElementById('trackOrderId').innerText;
-                                if (currentOrderId == id) {
-                                    const msgDiv = document.getElementById('notificationMessage');
-                                    if (msgDiv) {
-                                        msgDiv.innerText = message;
-                                        msgDiv.style.display = 'block';
-                                    }
-                                }
-                            }
                         }
                         order.status = newStatus;
-                        localStorage.setItem('orders', JSON.stringify(orders));
+                        // Save to cloud immediately
+                        await saveOrdersToCloud();
+                        // Refresh view
                         renderKitchenPanel();
+                        // Also update tracking modal if open
                         const trackingModal = document.getElementById('trackingModal');
                         if (trackingModal.style.display === 'flex') {
                             const currentOrderId = document.getElementById('trackOrderId').innerText;
@@ -1671,7 +1785,7 @@
                 };
             });
             document.querySelectorAll('.set-time-btn').forEach(btn => {
-                btn.onclick = () => {
+                btn.onclick = async () => {
                     const id = btn.getAttribute('data-id');
                     const timeInput = document.getElementById(`time-${id}`);
                     const timeValue = timeInput.value;
@@ -1679,7 +1793,7 @@
                         const order = orders.find(o => o.id == id);
                         if (order) {
                             order.estimatedTime = timeValue;
-                            localStorage.setItem('orders', JSON.stringify(orders));
+                            await saveOrdersToCloud();
                             renderKitchenPanel();
                             alert(`✅ تم تحديث الوقت المتوقع للطلب #${id} إلى ${timeValue} دقيقة`);
                         }
@@ -1788,7 +1902,7 @@
                 if (!restaurantOpen) return alert("المطعم مغلق حالياً");
                 document.getElementById('checkoutModal').style.display = 'flex';
             };
-            document.getElementById('checkoutForm').onsubmit = (e) => {
+            document.getElementById('checkoutForm').onsubmit = async (e) => {
                 e.preventDefault();
                 const name = document.getElementById('customerName').value;
                 const whatsapp = document.getElementById('customerWhatsapp').value;
@@ -1809,7 +1923,8 @@
                     customerLang: currentLang
                 };
                 orders.push(order);
-                localStorage.setItem('orders', JSON.stringify(orders));
+                // Save order to cloud
+                await saveOrdersToCloud();
                 cart = [];
                 updateCartUI();
                 document.getElementById('checkoutModal').style.display = 'none';
@@ -1901,7 +2016,6 @@
                 document.getElementById('loadingOverlay').style.opacity = '0';
                 setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 300);
             }, 100);
-            if (localStorage.getItem('orders')) orders = JSON.parse(localStorage.getItem('orders'));
             requestNotificationPermission();
         });
     </script>
