@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
+        /* جميع الأنماط كما هي دون تغيير */
         * {
             margin: 0;
             padding: 0;
@@ -48,7 +49,6 @@
         body[dir="ltr"] { text-align: left; }
         body[dir="rtl"] { text-align: right; }
 
-        /* Enhanced scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -801,6 +801,7 @@
             gap: 15px;
             text-align: center;
             padding: 20px;
+            transition: opacity 0.3s;
         }
         .loading div {
             animation: bounce 1s infinite;
@@ -810,10 +811,54 @@
             50%{ transform: translateY(-10px); }
         }
 
-        /* Mobile styles remain unchanged */
-        @media (max-width: 640px) { /* ... all existing mobile styles ... */ }
-        @media (max-width: 400px) { /* ... */ }
-        @media (max-height: 500px) and (orientation: landscape) { /* ... */ }
+        /* Mobile styles (unchanged) */
+        @media (max-width: 640px) {
+            header { padding: 10px 12px; }
+            .logo h1 { font-size: 1.3rem; }
+            .logo p { font-size: 0.65rem; }
+            .header-actions { gap: 8px; }
+            .lang-btn { padding: 3px 8px; font-size: 0.65rem; }
+            .icon-btn { font-size: 1.3rem; padding: 6px; }
+            .cart-count { font-size: 0.6rem; padding: 1px 4px; min-width: 16px; top: -2px; right: -2px; }
+            .dev-btn { padding: 5px 10px; font-size: 0.7rem; }
+            .container { padding: 8px 12px; }
+            .category-card { height: 50vh; min-height: 280px; }
+            .category-title { font-size: 1.1rem; padding: 6px 16px; bottom: 15px; left: 15px; right: auto; }
+            body[dir="rtl"] .category-title { left: auto; right: 15px; }
+            .products-grid { grid-template-columns: 1fr; gap: 16px; }
+            .product-card-new { border-radius: 20px; }
+            .product-name-badge { font-size: 0.75rem; padding: 2px 8px; top: 8px; left: 8px; }
+            .product-badge-status { font-size: 0.65rem; padding: 2px 8px; top: 8px; right: 8px; }
+            .size-quantity-row { flex-direction: column; align-items: stretch; gap: 8px; }
+            .size-selector { width: 100%; }
+            .quantity-control-new { justify-content: center; }
+            .order-price-row { flex-direction: column; align-items: stretch; gap: 8px; }
+            .order-btn { width: 100%; }
+            .product-price-new { width: 100%; text-align: center; justify-content: center; }
+            .page-header { margin-bottom: 16px; }
+            .page-title { font-size: 1.4rem; }
+            .cart-drawer { width: 100%; max-width: none; right: -100%; padding: 16px; }
+            .modal-content { padding: 16px; border-radius: 24px; }
+            .footer-content { grid-template-columns: 1fr; gap: 12px; text-align: center; }
+            .footer-item { justify-content: center; }
+            .status-banner { font-size: 0.8rem; padding: 8px 12px; }
+        }
+        @media (max-width: 400px) {
+            .category-card { height: 45vh; min-height: 240px; }
+            .product-details { padding: 12px; }
+            .product-name-badge { font-size: 0.7rem; }
+            .product-badge-status { font-size: 0.6rem; }
+            .order-btn { padding: 8px 12px; font-size: 0.85rem; }
+            .product-price-new { font-size: 0.9rem; padding: 4px 10px; }
+        }
+        @media (max-height: 500px) and (orientation: landscape) {
+            .category-card { height: 70vh; min-height: 260px; }
+            .products-grid { gap: 12px; }
+            .product-card-new { flex-direction: row; flex-wrap: wrap; }
+            .product-img-container { width: 120px; padding-top: 120px; flex-shrink: 0; }
+            .product-details { flex: 1; }
+            .size-quantity-row { flex-direction: row; flex-wrap: wrap; }
+        }
     </style>
 </head>
 <body>
@@ -941,13 +986,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        // All the existing JavaScript code remains exactly as it was in the previous version
-        // (I'm copying the full working script from the last stable version)
-        // For brevity, I include it here, but in the final answer I'll provide the complete script
-        // that includes the sync logic and all previous functionality.
-        // To keep the answer manageable, I'll reuse the script from the last successful version.
-        // (This is the same script that was in the previous message)
-        
         // JSONBin config
         const BIN_ID = '69b99a0aaa77b81da9f2cebf';
         const API_KEY = '$2a$10$HIZoab3tTM/2LPQAVLeK3.1P.PYxBVAFKNpWMtQOcJq/QfC3Z7/le';
@@ -1004,42 +1042,882 @@
         let isDevMode = false;
         let syncInterval = null;
 
-        function t(obj) { ... } // same as before
-        async function saveFullToCloud() { ... }
-        async function saveOrdersToCloud() { ... }
-        async function loadFullFromCloud() { ... }
-        async function syncOrdersFromCloud() { ... }
-        function startSync() { ... }
-        function stopSync() { ... }
-        async function saveToCloud() { ... }
-        async function loadFromCloud() { ... }
-        function renderCategories() { ... }
-        function openEditCategoryModal(idx) { ... }
-        function showCategoryProducts(categoryId) { ... }
-        function openProductForm(editData) { ... }
-        document.getElementById('saveProductBtn').onclick = ... 
-        document.getElementById('closeProductForm').onclick = ...
-        function openManageSizes() { ... }
-        document.getElementById('closeSizesModal').onclick = ...
-        function addToCartWithDetails(product, quantity, selectedSize, special) { ... }
-        function updateCartUI() { ... }
-        function updateStatusBanner() { ... }
-        function setLanguage(lang) { ... }
-        function showCustomerView() { ... }
-        function showDevView() { ... }
-        function showKitchenView() { ... }
-        function renderKitchenPanel() { ... }
-        function showArchiveModal() { ... }
-        function checkAuth(role, callback) { ... }
-        function handleRoute() { ... }
-        function attachCustomerEvents() { ... }
-        function requestNotificationPermission() { ... }
+        function t(obj) {
+            if (!obj) return "";
+            if (currentLang === 'ar') return obj.name_ar;
+            if (currentLang === 'fr') return obj.name_fr;
+            return obj.name_en;
+        }
 
-        // Event listeners etc.
-        document.getElementById('closeProductsPageBtn').onclick = ...
-        document.getElementById('closeArchiveModal').onclick = ...
+        async function saveFullToCloud() {
+            const payload = { categories, products: productsData, sizes, restaurantOpen, deliveryAvailable, orders };
+            try {
+                await fetch(BASE_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY }, body: JSON.stringify(payload) });
+                console.log("✅ تم حفظ جميع البيانات");
+            } catch(e) { console.warn(e); alert("❌ فشل الحفظ"); }
+        }
+
+        async function saveOrdersToCloud() {
+            try {
+                const res = await fetch(BASE_URL, { headers: { 'X-Master-Key': API_KEY } });
+                const data = await res.json();
+                const currentRecord = data.record || {};
+                currentRecord.orders = orders;
+                await fetch(BASE_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY }, body: JSON.stringify(currentRecord) });
+                console.log("✅ تم حفظ الطلبات في السحاب");
+            } catch(e) { console.warn(e); alert("❌ فشل حفظ الطلبات"); }
+        }
+
+        async function loadFullFromCloud() {
+            try {
+                const res = await fetch(BASE_URL, { headers: { 'X-Master-Key': API_KEY } });
+                const data = await res.json();
+                if (data.record) {
+                    if (data.record.categories) categories = data.record.categories;
+                    if (data.record.products) productsData = data.record.products;
+                    if (data.record.sizes) sizes = data.record.sizes;
+                    if (typeof data.record.restaurantOpen !== 'undefined') restaurantOpen = data.record.restaurantOpen;
+                    if (typeof data.record.deliveryAvailable !== 'undefined') deliveryAvailable = data.record.deliveryAvailable;
+                    if (data.record.orders) orders = data.record.orders;
+                }
+            } catch(e) { console.warn(e); }
+        }
+
+        async function syncOrdersFromCloud() {
+            try {
+                const res = await fetch(BASE_URL, { headers: { 'X-Master-Key': API_KEY } });
+                const data = await res.json();
+                if (data.record && data.record.orders) {
+                    orders = data.record.orders;
+                    if (document.getElementById('kitchenView').style.display !== 'none') {
+                        renderKitchenPanel();
+                    }
+                    const trackingModal = document.getElementById('trackingModal');
+                    if (trackingModal.style.display === 'flex') {
+                        const currentOrderId = document.getElementById('trackOrderId').innerText;
+                        const updatedOrder = orders.find(o => o.id == currentOrderId);
+                        if (updatedOrder) {
+                            const statusMap = { 'received': 'تم الاستلام', 'preparing': 'قيد التجهيز', 'waiting': 'لم يصل دورك', 'ready': 'جاهز' };
+                            document.getElementById('trackStatus').innerText = statusMap[updatedOrder.status] || updatedOrder.status;
+                            if (updatedOrder.estimatedTime) {
+                                const timeDiv = document.querySelector('#trackingModal .modal-content div:first-of-type');
+                                if (!document.getElementById('estimatedTimeDisplay')) {
+                                    const timeDisplay = document.createElement('div');
+                                    timeDisplay.id = 'estimatedTimeDisplay';
+                                    timeDisplay.style.marginTop = '10px';
+                                    timeDisplay.style.padding = '8px';
+                                    timeDisplay.style.background = '#e8f5e9';
+                                    timeDisplay.style.borderRadius = '20px';
+                                    timeDisplay.innerHTML = `⏱️ الوقت المتوقع: ${updatedOrder.estimatedTime} دقيقة`;
+                                    timeDiv.parentNode.insertBefore(timeDisplay, timeDiv.nextSibling);
+                                } else {
+                                    document.getElementById('estimatedTimeDisplay').innerHTML = `⏱️ الوقت المتوقع: ${updatedOrder.estimatedTime} دقيقة`;
+                                }
+                            }
+                            if (updatedOrder.notificationMessage) {
+                                const msgDiv = document.getElementById('notificationMessage');
+                                if (msgDiv) { msgDiv.innerText = updatedOrder.notificationMessage; msgDiv.style.display = 'block'; }
+                            }
+                        }
+                    }
+                }
+            } catch(e) { console.warn("خطأ في المزامنة", e); }
+        }
+
+        function startSync() {
+            if (syncInterval) clearInterval(syncInterval);
+            syncInterval = setInterval(() => { syncOrdersFromCloud(); }, 5000);
+        }
+        function stopSync() { if (syncInterval) { clearInterval(syncInterval); syncInterval = null; } }
+
+        async function saveToCloud() { await saveFullToCloud(); }
+        async function loadFromCloud() { await loadFullFromCloud(); }
+
+        function renderCategories() {
+            const wrapper = document.getElementById('categoriesWrapper');
+            wrapper.innerHTML = '';
+            categories.forEach((cat, idx) => {
+                const slide = document.createElement('div');
+                slide.className = 'swiper-slide';
+                slide.innerHTML = `
+                    <div class="category-card" data-category="${cat.id}" data-cat-idx="${idx}">
+                        <img class="category-img" src="${cat.image}" alt="${t(cat)}" loading="lazy">
+                        <div class="category-title">
+                            ${t(cat)}
+                            ${isDevMode ? `<button class="edit-icon edit-category" data-idx="${idx}"><i class="fas fa-pencil-alt"></i></button>` : ''}
+                        </div>
+                    </div>
+                `;
+                wrapper.appendChild(slide);
+            });
+            if (categorySwiper) categorySwiper.destroy(true, true);
+            categorySwiper = new Swiper('.categorySwiper', {
+                slidesPerView: 1, spaceBetween: 0, loop: true,
+                autoplay: { delay: 1200, disableOnInteraction: false },
+                navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+                speed: 600
+            });
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.edit-category')) return;
+                    const categoryId = card.getAttribute('data-category');
+                    if (categoryId) showCategoryProducts(categoryId);
+                });
+            });
+            if (isDevMode) {
+                document.querySelectorAll('.edit-category').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const idx = btn.getAttribute('data-idx');
+                        openEditCategoryModal(idx);
+                    });
+                });
+            }
+        }
+
+        function openEditCategoryModal(idx) {
+            const cat = categories[idx];
+            const newNameAr = prompt("الاسم بالعربية:", cat.name_ar);
+            if (newNameAr !== null) cat.name_ar = newNameAr;
+            const newNameFr = prompt("الاسم بالفرنسية:", cat.name_fr);
+            if (newNameFr !== null) cat.name_fr = newNameFr;
+            const newNameEn = prompt("الاسم بالإنجليزية:", cat.name_en);
+            if (newNameEn !== null) cat.name_en = newNameEn;
+            const newImage = prompt("رابط الصورة:", cat.image);
+            if (newImage !== null) cat.image = newImage;
+            renderCategories();
+            if (currentCategoryId && document.getElementById('categoryProductsPage').style.display === 'block') {
+                showCategoryProducts(currentCategoryId);
+            }
+            saveToCloud();
+        }
+
+        function showCategoryProducts(categoryId) {
+            currentCategoryId = categoryId;
+            const category = categories.find(c => c.id === categoryId);
+            if (!category) return;
+            document.getElementById('categoryPageTitle').innerHTML = t(category);
+            const addBtnContainer = document.getElementById('addProductBtnContainer');
+            if (isDevMode) {
+                addBtnContainer.innerHTML = `<button class="add-product-btn" id="addNewProductBtn"><i class="fas fa-plus"></i> إضافة منتج</button>`;
+                document.getElementById('addNewProductBtn').onclick = () => openProductForm(null);
+            } else {
+                addBtnContainer.innerHTML = '';
+            }
+            const productList = productsData[categoryId] || [];
+            const grid = document.getElementById('productsGridNew');
+            grid.innerHTML = '';
+            if (productList.length === 0 && !isDevMode) {
+                grid.innerHTML = '<div style="text-align:center; padding:30px;">لا توجد منتجات في هذه الفئة حالياً</div>';
+            }
+            productList.forEach((prod, idx) => {
+                const productAvailable = prod.available && restaurantOpen;
+                const card = document.createElement('div');
+                card.className = 'product-card-new';
+                card.setAttribute('data-product-idx', idx);
+                card.setAttribute('data-category', categoryId);
+                const statusText = prod.available ? (restaurantOpen ? "متوفر" : "المطعم مغلق") : "غير متوفر";
+                const statusClass = (prod.available && restaurantOpen) ? "available" : "unavailable";
+                card.innerHTML = `
+                    <div class="product-img-container">
+                        <img class="product-img-new" src="${prod.image}" alt="${t(prod)}" loading="lazy">
+                        <div class="product-badge-status ${statusClass}">${statusText}</div>
+                        <div class="product-name-badge">
+                            ${t(prod)}
+                            ${isDevMode ? `<button class="edit-icon edit-product" data-cat="${categoryId}" data-idx="${idx}"><i class="fas fa-pencil-alt"></i></button>` : ''}
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <div class="size-quantity-row">
+                            <div class="size-selector">
+                                <select class="size-select" data-idx="${idx}" data-cat="${categoryId}">
+                                    ${sizes.map(size => `<option value="${size.id}" data-extra="${size.priceExtra}">${t(size)} +${size.priceExtra} MAD</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="quantity-control-new">
+                                <button class="qty-minus" data-idx="${idx}" data-cat="${categoryId}">-</button>
+                                <span class="qty-value" id="qty-${categoryId}-${idx}">1</span>
+                                <button class="qty-plus" data-idx="${idx}" data-cat="${categoryId}">+</button>
+                            </div>
+                        </div>
+                        <div class="order-price-row">
+                            <button class="order-btn add-to-cart-new" data-idx="${idx}" data-cat="${categoryId}">
+                                <i class="fas fa-shopping-cart"></i> طلب
+                            </button>
+                            <div class="product-price-new" id="price-${categoryId}-${idx}">
+                                ${prod.price} MAD
+                                ${isDevMode ? `<button class="delete-icon delete-product" data-cat="${categoryId}" data-idx="${idx}"><i class="fas fa-trash-alt"></i></button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                if (!productAvailable && !isDevMode) {
+                    const overlay = document.createElement('div');
+                    overlay.className = 'product-unavailable-overlay';
+                    overlay.innerText = prod.available ? "المطعم مغلق حالياً" : "غير متوفر";
+                    card.appendChild(overlay);
+                }
+                grid.appendChild(card);
+
+                if (isDevMode) {
+                    const priceDiv = card.querySelector('.product-price-new');
+                    const sizeManageBtn = document.createElement('button');
+                    sizeManageBtn.className = 'edit-icon';
+                    sizeManageBtn.style.marginLeft = '5px';
+                    sizeManageBtn.innerHTML = '<i class="fas fa-ruler"></i>';
+                    sizeManageBtn.title = 'إدارة الأحجام';
+                    sizeManageBtn.onclick = (e) => { e.stopPropagation(); openManageSizes(); };
+                    priceDiv.appendChild(sizeManageBtn);
+                }
+
+                const qtySpan = document.getElementById(`qty-${categoryId}-${idx}`);
+                const priceSpan = document.getElementById(`price-${categoryId}-${idx}`);
+                const sizeSelect = card.querySelector('.size-select');
+                const updatePriceDisplay = () => {
+                    const basePrice = parseFloat(prod.price) || 0;
+                    const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+                    const extra = parseFloat(selectedOption?.getAttribute('data-extra')) || 0;
+                    const qty = parseInt(qtySpan.innerText);
+                    const total = (basePrice + extra) * qty;
+                    priceSpan.innerHTML = `${total} MAD ${isDevMode ? `<button class="delete-icon delete-product" data-cat="${categoryId}" data-idx="${idx}"><i class="fas fa-trash-alt"></i></button>` : ''}`;
+                    if (isDevMode) {
+                        const priceDiv = priceSpan;
+                        if (!priceDiv.querySelector('.edit-icon[title="إدارة الأحجام"]')) {
+                            const sizeManageBtn = document.createElement('button');
+                            sizeManageBtn.className = 'edit-icon';
+                            sizeManageBtn.style.marginLeft = '5px';
+                            sizeManageBtn.innerHTML = '<i class="fas fa-ruler"></i>';
+                            sizeManageBtn.title = 'إدارة الأحجام';
+                            sizeManageBtn.onclick = (e) => { e.stopPropagation(); openManageSizes(); };
+                            priceDiv.appendChild(sizeManageBtn);
+                        }
+                    }
+                };
+                card.querySelector('.qty-minus').addEventListener('click', () => {
+                    let qty = parseInt(qtySpan.innerText);
+                    if (qty > 1) qtySpan.innerText = qty - 1;
+                    updatePriceDisplay();
+                });
+                card.querySelector('.qty-plus').addEventListener('click', () => {
+                    let qty = parseInt(qtySpan.innerText);
+                    qtySpan.innerText = qty + 1;
+                    updatePriceDisplay();
+                });
+                sizeSelect.addEventListener('change', updatePriceDisplay);
+                updatePriceDisplay();
+            });
+
+            document.addEventListener('click', (e) => {
+                const addBtn = e.target.closest('.add-to-cart-new');
+                if (!addBtn) return;
+                e.preventDefault(); e.stopPropagation();
+                if (!restaurantOpen) { alert("المطعم مغلق حالياً"); return; }
+                const catId = addBtn.getAttribute('data-cat');
+                const idx = addBtn.getAttribute('data-idx');
+                if (!catId || idx === null) return;
+                const prod = productsData[catId] ? productsData[catId][parseInt(idx)] : null;
+                if (!prod) return;
+                if (!prod.available) { alert("هذا المنتج غير متوفر"); return; }
+                const card = addBtn.closest('.product-card-new');
+                if (!card) return;
+                const qtySpan = card.querySelector('.qty-value');
+                const sizeSelect = card.querySelector('.size-select');
+                if (!qtySpan || !sizeSelect) return;
+                const qty = parseInt(qtySpan.innerText);
+                const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+                const sizeId = selectedOption.value;
+                const selectedSize = sizes.find(s => s.id === sizeId);
+                addToCartWithDetails(prod, qty, selectedSize, "");
+            });
+
+            if (isDevMode) {
+                document.querySelectorAll('.edit-product').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const catId = btn.getAttribute('data-cat');
+                        const idx = btn.getAttribute('data-idx');
+                        openProductForm({ catId, idx });
+                    });
+                });
+                document.querySelectorAll('.delete-product').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const catId = btn.getAttribute('data-cat');
+                        const idx = btn.getAttribute('data-idx');
+                        if (confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+                            productsData[catId].splice(idx, 1);
+                            showCategoryProducts(catId);
+                            saveToCloud();
+                        }
+                    });
+                });
+            }
+            document.getElementById('customerView').style.display = 'none';
+            document.getElementById('categoryProductsPage').style.display = 'block';
+            document.getElementById('kitchenView').style.display = 'none';
+        }
+
+        function openProductForm(editData) {
+            const modal = document.getElementById('productFormModal');
+            const title = document.getElementById('productFormTitle');
+            if (editData) {
+                const prod = productsData[editData.catId][editData.idx];
+                document.getElementById('prodNameAr').value = prod.name_ar;
+                document.getElementById('prodNameFr').value = prod.name_fr;
+                document.getElementById('prodNameEn').value = prod.name_en;
+                document.getElementById('prodPrice').value = prod.price;
+                document.getElementById('prodImage').value = prod.image;
+                document.getElementById('prodAvailable').checked = prod.available;
+                title.innerText = "تعديل المنتج";
+                modal.setAttribute('data-edit-cat', editData.catId);
+                modal.setAttribute('data-edit-idx', editData.idx);
+            } else {
+                document.getElementById('prodNameAr').value = '';
+                document.getElementById('prodNameFr').value = '';
+                document.getElementById('prodNameEn').value = '';
+                document.getElementById('prodPrice').value = '';
+                document.getElementById('prodImage').value = '';
+                document.getElementById('prodAvailable').checked = true;
+                title.innerText = "إضافة منتج جديد";
+                modal.removeAttribute('data-edit-cat');
+                modal.removeAttribute('data-edit-idx');
+            }
+            modal.style.display = 'flex';
+        }
+
+        document.getElementById('saveProductBtn').onclick = () => {
+            const modal = document.getElementById('productFormModal');
+            const catId = currentCategoryId;
+            if (!catId) return;
+            const newProduct = {
+                name_ar: document.getElementById('prodNameAr').value,
+                name_fr: document.getElementById('prodNameFr').value,
+                name_en: document.getElementById('prodNameEn').value,
+                price: document.getElementById('prodPrice').value,
+                image: document.getElementById('prodImage').value,
+                available: document.getElementById('prodAvailable').checked
+            };
+            if (modal.hasAttribute('data-edit-cat')) {
+                const editCat = modal.getAttribute('data-edit-cat');
+                const editIdx = parseInt(modal.getAttribute('data-edit-idx'));
+                if (editCat === catId) {
+                    productsData[catId][editIdx] = newProduct;
+                } else {
+                    productsData[editCat][editIdx] = newProduct;
+                }
+            } else {
+                if (!productsData[catId]) productsData[catId] = [];
+                productsData[catId].push(newProduct);
+            }
+            modal.style.display = 'none';
+            showCategoryProducts(catId);
+            saveToCloud();
+        };
+        document.getElementById('closeProductForm').onclick = () => document.getElementById('productFormModal').style.display = 'none';
+
+        function openManageSizes() {
+            const modal = document.getElementById('manageSizesModal');
+            const container = document.getElementById('sizesList');
+            function renderSizesList() {
+                container.innerHTML = '';
+                sizes.forEach((size, idx) => {
+                    container.innerHTML += `
+                        <div style="margin-bottom:12px; border:1px solid #ddd; padding:10px; border-radius:20px;">
+                            <div>الاسم (عربي): <input type="text" value="${size.name_ar}" class="size-name-ar-${idx}" style="width:100px;"></div>
+                            <div>الاسم (فرنسي): <input type="text" value="${size.name_fr}" class="size-name-fr-${idx}" style="width:100px;"></div>
+                            <div>الاسم (إنجليزي): <input type="text" value="${size.name_en}" class="size-name-en-${idx}" style="width:100px;"></div>
+                            <div>السعر الإضافي: <input type="number" value="${size.priceExtra}" class="size-extra-${idx}" style="width:80px;"> MAD</div>
+                            <button class="delete-size-btn" data-idx="${idx}">حذف</button>
+                        </div>
+                    `;
+                });
+                for (let i = 0; i < sizes.length; i++) {
+                    const arInput = document.querySelector(`.size-name-ar-${i}`);
+                    const frInput = document.querySelector(`.size-name-fr-${i}`);
+                    const enInput = document.querySelector(`.size-name-en-${i}`);
+                    const extraInput = document.querySelector(`.size-extra-${i}`);
+                    if (arInput) arInput.onchange = () => { sizes[i].name_ar = arInput.value; };
+                    if (frInput) frInput.onchange = () => { sizes[i].name_fr = frInput.value; };
+                    if (enInput) enInput.onchange = () => { sizes[i].name_en = enInput.value; };
+                    if (extraInput) extraInput.onchange = () => { sizes[i].priceExtra = parseFloat(extraInput.value) || 0; };
+                }
+                document.querySelectorAll('.delete-size-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        const idx = parseInt(btn.getAttribute('data-idx'));
+                        sizes.splice(idx, 1);
+                        renderSizesList();
+                        saveToCloud();
+                    };
+                });
+            }
+            renderSizesList();
+            document.getElementById('addNewSizeBtn').onclick = () => {
+                sizes.push({ id: "new" + Date.now(), name_ar: "جديد", name_fr: "Nouveau", name_en: "New", priceExtra: 0 });
+                renderSizesList();
+                saveToCloud();
+            };
+            modal.style.display = 'flex';
+        }
+        document.getElementById('closeSizesModal').onclick = () => document.getElementById('manageSizesModal').style.display = 'none';
+
+        function addToCartWithDetails(product, quantity, selectedSize, special) {
+            let finalPrice = parseFloat(product.price) || 0;
+            if (selectedSize) finalPrice += selectedSize.priceExtra;
+            const cartItem = {
+                ...product,
+                quantity: quantity,
+                size: selectedSize ? { ...selectedSize } : null,
+                specialRequest: special,
+                finalPrice: finalPrice,
+                totalPrice: finalPrice * quantity
+            };
+            cart.push(cartItem);
+            updateCartUI();
+            alert(`تمت إضافة ${quantity} × ${t(product)} إلى السلة`);
+        }
+
+        function updateCartUI() {
+            const cartDiv = document.getElementById('cartItems');
+            const totalSpan = document.getElementById('cartTotal');
+            let total = 0;
+            cartDiv.innerHTML = '';
+            cart.forEach((item, idx) => {
+                const itemTotal = item.finalPrice * item.quantity;
+                total += itemTotal;
+                cartDiv.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid #eee; padding:8px 0; flex-wrap:wrap; gap:8px;">
+                        <div>
+                            <strong>${t(item)}</strong> x ${item.quantity}<br>
+                            ${item.size ? t(item.size) : ''} ${item.specialRequest ? `<br><small>${item.specialRequest}</small>` : ''}
+                        </div>
+                        <div>${itemTotal} MAD</div>
+                        <button class="remove-item" data-idx="${idx}" style="background:#e74c3c; color:white; border:none; border-radius:20px; padding:4px 10px;">✖</button>
+                    </div>
+                `;
+            });
+            totalSpan.innerText = `المجموع: ${total} MAD`;
+            const cartCountSpan = document.getElementById('cartCount');
+            if (cartCountSpan) cartCountSpan.innerText = cart.length;
+            document.querySelectorAll('.remove-item').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const idx = btn.getAttribute('data-idx');
+                    cart.splice(idx, 1);
+                    updateCartUI();
+                });
+            });
+        }
+
+        function updateStatusBanner() {
+            const banner = document.getElementById('statusBanner');
+            if (!restaurantOpen) banner.innerHTML = '<div class="status-banner closed">⛔ المطعم مغلق حالياً</div>';
+            else banner.innerHTML = '<div class="status-banner">✅ المطعم مفتوح – نرحب بكم</div>';
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+            document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.lang-btn[data-lang="${lang}"]`).classList.add('active');
+            renderCategories();
+            if (currentCategoryId && document.getElementById('categoryProductsPage').style.display === 'block') {
+                showCategoryProducts(currentCategoryId);
+            }
+        }
+
+        function showCustomerView() {
+            isDevMode = false;
+            document.getElementById('customerView').style.display = 'block';
+            document.getElementById('categoryProductsPage').style.display = 'none';
+            document.getElementById('kitchenView').style.display = 'none';
+            const headerActions = document.getElementById('headerActions');
+            headerActions.innerHTML = `
+                <div class="lang-switch">
+                    <button class="lang-btn" data-lang="ar">عربي</button>
+                    <button class="lang-btn" data-lang="fr">FR</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+                <button class="icon-btn" id="cartBtn"><i class="fas fa-shopping-cart"></i><span id="cartCount" class="cart-count">0</span></button>
+            `;
+            attachCustomerEvents();
+            renderCategories();
+            updateStatusBanner();
+            requestNotificationPermission();
+            startSync();
+        }
+
+        function showDevView() {
+            isDevMode = true;
+            document.getElementById('customerView').style.display = 'block';
+            document.getElementById('categoryProductsPage').style.display = 'none';
+            document.getElementById('kitchenView').style.display = 'none';
+            const headerActions = document.getElementById('headerActions');
+            headerActions.innerHTML = `
+                <div class="lang-switch">
+                    <button class="lang-btn" data-lang="ar">عربي</button>
+                    <button class="lang-btn" data-lang="fr">FR</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+                <button class="icon-btn" id="cartBtn"><i class="fas fa-shopping-cart"></i><span id="cartCount" class="cart-count">0</span></button>
+                <div class="dev-toolbar">
+                    <button class="dev-btn" id="saveDevChangesBtn"><i class="fas fa-save"></i> حفظ التغييرات</button>
+                    <button class="dev-btn" id="manageSizesBtn"><i class="fas fa-ruler"></i> إدارة الأحجام</button>
+                    <button class="dev-btn" id="exitDevModeBtn"><i class="fas fa-sign-out-alt"></i> الخروج من وضع المطور</button>
+                </div>
+            `;
+            attachCustomerEvents();
+            renderCategories();
+            updateStatusBanner();
+            document.getElementById('saveDevChangesBtn').onclick = () => saveFullToCloud();
+            document.getElementById('manageSizesBtn').onclick = () => openManageSizes();
+            document.getElementById('exitDevModeBtn').onclick = () => {
+                if (confirm("هل تريد الخروج من وضع المطور؟")) {
+                    window.location.hash = 'customer';
+                    alert("👋 تم الخروج من وضع المطور");
+                }
+            };
+            requestNotificationPermission();
+            startSync();
+        }
+
+        function showKitchenView() {
+            isDevMode = false;
+            document.getElementById('customerView').style.display = 'none';
+            document.getElementById('categoryProductsPage').style.display = 'none';
+            document.getElementById('kitchenView').style.display = 'block';
+            const headerActions = document.getElementById('headerActions');
+            headerActions.innerHTML = `<button class="exit-btn" id="exitKitchenBtn"><i class="fas fa-arrow-left"></i> العودة للرئيسية</button>`;
+            document.getElementById('exitKitchenBtn').onclick = () => { window.location.hash = 'customer'; };
+            renderKitchenPanel();
+            startSync();
+        }
+
+        function renderKitchenPanel() {
+            const container = document.getElementById('kitchenPanelContent');
+            const tabs = [{ id: 'active', name: '🔄 الطلبات النشطة' }];
+            let activeTab = 'active';
+            if (!window.kitchenActiveTab) window.kitchenActiveTab = 'active';
+            activeTab = window.kitchenActiveTab;
+
+            const activeOrders = orders.filter(o => o.status !== 'ready');
+            let ordersToShow = activeOrders;
+
+            let headerHtml = `
+                <div class="kitchen-header">
+                    <h2>🍽️ لوحة المطبخ</h2>
+                    <button class="archive-icon" id="openArchiveBtn"><i class="fas fa-archive"></i> الأرشيف</button>
+                </div>
+            `;
+            let tabsHtml = '<div class="kitchen-tabs">';
+            tabs.forEach(tab => {
+                tabsHtml += `<button class="kitchen-tab ${activeTab === tab.id ? 'active' : ''}" data-tab="${tab.id}">${tab.name}</button>`;
+            });
+            tabsHtml += '</div>';
+
+            let ordersHtml = '';
+            ordersToShow.forEach(order => {
+                const statusMap = { 'received': 'تم الاستلام', 'preparing': 'قيد التجهيز', 'waiting': 'لم يصل دورك', 'ready': 'جاهز' };
+                ordersHtml += `
+                    <div style="border:2px solid #e0e0e0; margin-bottom:15px; padding:15px; border-radius:20px; background:white;">
+                        <strong>طلب #${order.id}</strong><br>
+                        <strong>الزبون:</strong> ${order.customer.name}<br>
+                        <strong>رقم واتساب:</strong> ${order.customer.whatsapp}<br>
+                        <strong>الحالة الحالية:</strong> <span style="color:#93C572; font-weight:bold;">${statusMap[order.status] || order.status}</span><br>
+                        ${order.estimatedTime ? `<div class="estimated-time">⏱️ الوقت المتوقع: ${order.estimatedTime} دقيقة</div>` : ''}
+                        <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:8px;">
+                            <button class="status-btn" data-id="${order.id}" data-status="received" style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);">✅ تم الاستلام</button>
+                            <button class="status-btn" data-id="${order.id}" data-status="preparing" style="background:linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">🔄 قيد التجهيز</button>
+                            <button class="status-btn" data-id="${order.id}" data-status="waiting" style="background:linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);">⏰ لم يصل دورك</button>
+                            <button class="status-btn" data-id="${order.id}" data-status="ready" style="background:linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);">✅ جاهز</button>
+                        </div>
+                        <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+                            <input type="number" id="time-${order.id}" placeholder="الوقت المتوقع (دقائق)" style="width:150px; display:inline-block; margin:0;">
+                            <button class="set-time-btn" data-id="${order.id}" style="background:linear-gradient(135deg, #3498db 0%, #2980b9 100%); color:white; border:none; padding:8px 15px; border-radius:40px; cursor:pointer;">⏱️ إضافة وقت</button>
+                        </div>
+                        <hr style="margin:10px 0;">
+                        <strong>المنتجات:</strong><br>
+                        ${order.items.map(item => `${item.quantity} × ${t(item)} ${item.size ? '(' + t(item.size) + ')' : ''}`).join('<br>')}
+                        <br><strong>المجموع:</strong> ${order.total} MAD
+                        ${order.notes ? `<br><strong>ملاحظات:</strong> ${order.notes}` : ''}
+                    </div>
+                `;
+            });
+            if (ordersToShow.length === 0) ordersHtml = '<div style="text-align:center; padding:30px;">لا توجد طلبات نشطة</div>';
+
+            container.innerHTML = headerHtml + tabsHtml + `<div id="kitchenOrdersList">${ordersHtml}</div>`;
+
+            document.getElementById('openArchiveBtn').onclick = () => showArchiveModal();
+            document.querySelectorAll('.kitchen-tab').forEach(btn => {
+                btn.onclick = () => {
+                    window.kitchenActiveTab = btn.getAttribute('data-tab');
+                    renderKitchenPanel();
+                };
+            });
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.onclick = async () => {
+                    const id = btn.getAttribute('data-id');
+                    const newStatus = btn.getAttribute('data-status');
+                    const order = orders.find(o => o.id == id);
+                    if (order) {
+                        if (newStatus === 'ready' && order.status !== 'ready') {
+                            let message = '';
+                            const lang = order.customerLang || 'ar';
+                            if (order.method === 'pickup') {
+                                if (lang === 'ar') message = '🍔 تعال خذ طلبك! ✅';
+                                else if (lang === 'fr') message = '🍔 Venez chercher votre commande ! ✅';
+                                else message = '🍔 Come pick up your order! ✅';
+                            } else {
+                                if (lang === 'ar') message = '🚚 طلبك قادم إليك! ✅';
+                                else if (lang === 'fr') message = '🚚 Votre commande arrive ! ✅';
+                                else message = '🚚 Your order is on its way! ✅';
+                            }
+                            if (Notification.permission === 'granted') {
+                                new Notification(`ESPACE FADALLAH - طلب #${order.id}`, {
+                                    body: message,
+                                    icon: 'https://placehold.co/64x64/93C572/FFFFFF?text=EF'
+                                });
+                            }
+                            order.notificationMessage = message;
+                        }
+                        order.status = newStatus;
+                        await saveOrdersToCloud();
+                        renderKitchenPanel();
+                        const trackingModal = document.getElementById('trackingModal');
+                        if (trackingModal.style.display === 'flex') {
+                            const currentOrderId = document.getElementById('trackOrderId').innerText;
+                            if (currentOrderId == id) {
+                                const statusMap = { 'received': 'تم الاستلام', 'preparing': 'قيد التجهيز', 'waiting': 'لم يصل دورك', 'ready': 'جاهز' };
+                                document.getElementById('trackStatus').innerText = statusMap[newStatus] || newStatus;
+                                if (order.notificationMessage) {
+                                    const msgDiv = document.getElementById('notificationMessage');
+                                    if (msgDiv) { msgDiv.innerText = order.notificationMessage; msgDiv.style.display = 'block'; }
+                                }
+                            }
+                        }
+                    }
+                };
+            });
+            document.querySelectorAll('.set-time-btn').forEach(btn => {
+                btn.onclick = async () => {
+                    const id = btn.getAttribute('data-id');
+                    const timeInput = document.getElementById(`time-${id}`);
+                    const timeValue = timeInput.value;
+                    if (timeValue && !isNaN(timeValue)) {
+                        const order = orders.find(o => o.id == id);
+                        if (order) {
+                            order.estimatedTime = timeValue;
+                            await saveOrdersToCloud();
+                            renderKitchenPanel();
+                            alert(`✅ تم تحديث الوقت المتوقع للطلب #${id} إلى ${timeValue} دقيقة`);
+                        }
+                    } else {
+                        alert("الرجاء إدخال وقت صحيح بالدقائق");
+                    }
+                };
+            });
+        }
+
+        function showArchiveModal() {
+            const modal = document.getElementById('archiveModal');
+            const container = document.getElementById('archiveContent');
+            const readyOrders = orders.filter(o => o.status === 'ready');
+            const now = new Date();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const yesterdayStart = new Date(todayStart);
+            yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+            const lastWeekStart = new Date(todayStart);
+            lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+            const lastMonthStart = new Date(todayStart);
+            lastMonthStart.setMonth(lastMonthStart.getMonth() - 1);
+
+            const groups = {
+                today: readyOrders.filter(o => new Date(o.timestamp) >= todayStart),
+                yesterday: readyOrders.filter(o => { const d = new Date(o.timestamp); return d >= yesterdayStart && d < todayStart; }),
+                lastWeek: readyOrders.filter(o => { const d = new Date(o.timestamp); return d >= lastWeekStart && d < yesterdayStart; }),
+                lastMonth: readyOrders.filter(o => { const d = new Date(o.timestamp); return d >= lastMonthStart && d < lastWeekStart; })
+            };
+
+            let html = '';
+            for (const [period, ordersList] of Object.entries(groups)) {
+                if (ordersList.length === 0) continue;
+                let periodName = '';
+                if (period === 'today') periodName = '📅 اليوم';
+                else if (period === 'yesterday') periodName = '📆 أمس';
+                else if (period === 'lastWeek') periodName = '🗓️ الأسبوع الماضي';
+                else if (period === 'lastMonth') periodName = '📅 الشهر الماضي';
+                html += `<h4 style="margin: 20px 0 10px 0; color: #93C572;">${periodName}</h4>`;
+                html += '<div class="archive-modal-grid">';
+                ordersList.forEach(order => {
+                    html += `
+                        <div class="archive-order-card">
+                            <strong>طلب #${order.id}</strong><br>
+                            <strong>الزبون:</strong> ${order.customer.name}<br>
+                            <strong>رقم واتساب:</strong> ${order.customer.whatsapp}<br>
+                            <strong>التاريخ:</strong> ${new Date(order.timestamp).toLocaleString()}<br>
+                            <hr>
+                            <strong>المنتجات:</strong><br>
+                            ${order.items.map(item => `${item.quantity} × ${t(item)} ${item.size ? '(' + t(item.size) + ')' : ''}`).join('<br>')}
+                            <br><strong>المجموع:</strong> ${order.total} MAD
+                            ${order.notes ? `<br><strong>ملاحظات:</strong> ${order.notes}` : ''}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            if (html === '') html = '<div style="text-align:center; padding:30px;">لا توجد طلبات مكتملة في الأرشيف</div>';
+            container.innerHTML = html;
+            modal.style.display = 'flex';
+        }
+
+        function checkAuth(role, callback) {
+            const password = role === 'dev' ? DEV_PASSWORD : KITCHEN_PASSWORD;
+            const input = prompt(`أدخل كلمة المرور للوصول إلى ${role === 'dev' ? 'لوحة المطور' : 'لوحة المطبخ'}:`);
+            if (input === password) callback();
+            else { alert('كلمة المرور غير صحيحة'); window.location.hash = 'customer'; }
+        }
+
+        function handleRoute() {
+            const hash = window.location.hash.substring(1) || 'customer';
+            if (hash === 'customer') showCustomerView();
+            else if (hash === 'dev') checkAuth('dev', () => showDevView());
+            else if (hash === 'kitchen') checkAuth('kitchen', () => showKitchenView());
+            else window.location.hash = 'customer';
+        }
+
+        function attachCustomerEvents() {
+            const cartBtn = document.getElementById('cartBtn');
+            if (cartBtn) cartBtn.onclick = () => {
+                document.getElementById('cartDrawer').classList.add('open');
+                document.getElementById('cartOverlay').style.display = 'block';
+            };
+            document.getElementById('cartCloseBtn').onclick = () => {
+                document.getElementById('cartDrawer').classList.remove('open');
+                document.getElementById('cartOverlay').style.display = 'none';
+            };
+            document.getElementById('cartOverlay').onclick = () => {
+                document.getElementById('cartDrawer').classList.remove('open');
+                document.getElementById('cartOverlay').style.display = 'none';
+            };
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.onclick = () => setLanguage(btn.getAttribute('data-lang'));
+            });
+            document.getElementById('checkoutBtn').onclick = () => {
+                if (cart.length === 0) return alert("السلة فارغة");
+                if (!restaurantOpen) return alert("المطعم مغلق حالياً");
+                document.getElementById('checkoutModal').style.display = 'flex';
+            };
+            document.getElementById('checkoutForm').onsubmit = async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('customerName').value;
+                const whatsapp = document.getElementById('customerWhatsapp').value;
+                const method = document.getElementById('deliveryMethod').value;
+                const address = document.getElementById('customerAddress').value;
+                const notes = document.getElementById('orderNotes').value;
+                const orderId = Date.now();
+                const order = {
+                    id: orderId,
+                    customer: { name, whatsapp, address: method === 'delivery' ? address : null },
+                    items: [...cart],
+                    total: cart.reduce((s, i) => s + (i.finalPrice * i.quantity), 0),
+                    status: 'received',
+                    method,
+                    notes,
+                    timestamp: new Date().toISOString(),
+                    estimatedTime: null,
+                    customerLang: currentLang
+                };
+                orders.push(order);
+                await saveOrdersToCloud();
+                cart = [];
+                updateCartUI();
+                document.getElementById('checkoutModal').style.display = 'none';
+                document.getElementById('trackOrderId').innerText = orderId;
+                document.getElementById('trackStatus').innerText = 'تم الاستلام';
+                document.getElementById('notificationMessage').style.display = 'none';
+                document.getElementById('trackingModal').style.display = 'flex';
+                
+                const interval = setInterval(() => {
+                    const updatedOrder = orders.find(o => o.id == orderId);
+                    if (updatedOrder) {
+                        const statusMap = { 'received': 'تم الاستلام', 'preparing': 'قيد التجهيز', 'waiting': 'لم يصل دورك', 'ready': 'جاهز' };
+                        document.getElementById('trackStatus').innerText = statusMap[updatedOrder.status] || updatedOrder.status;
+                        if (updatedOrder.estimatedTime) {
+                            const timeDiv = document.querySelector('#trackingModal .modal-content div:first-of-type');
+                            if (!document.getElementById('estimatedTimeDisplay')) {
+                                const timeDisplay = document.createElement('div');
+                                timeDisplay.id = 'estimatedTimeDisplay';
+                                timeDisplay.style.marginTop = '10px';
+                                timeDisplay.style.padding = '8px';
+                                timeDisplay.style.background = '#e8f5e9';
+                                timeDisplay.style.borderRadius = '20px';
+                                timeDisplay.innerHTML = `⏱️ الوقت المتوقع: ${updatedOrder.estimatedTime} دقيقة`;
+                                timeDiv.parentNode.insertBefore(timeDisplay, timeDiv.nextSibling);
+                            } else {
+                                document.getElementById('estimatedTimeDisplay').innerHTML = `⏱️ الوقت المتوقع: ${updatedOrder.estimatedTime} دقيقة`;
+                            }
+                        }
+                        if (updatedOrder.notificationMessage) {
+                            const msgDiv = document.getElementById('notificationMessage');
+                            if (msgDiv) { msgDiv.innerText = updatedOrder.notificationMessage; msgDiv.style.display = 'block'; }
+                        }
+                    }
+                }, 5000);
+                window.trackingInterval = interval;
+            };
+            document.getElementById('closeTracking').onclick = () => {
+                document.getElementById('trackingModal').style.display = 'none';
+                if (window.trackingInterval) clearInterval(window.trackingInterval);
+            };
+            document.getElementById('deliveryMethod').onchange = (e) => {
+                document.getElementById('addressField').style.display = (e.target.value === 'delivery' && deliveryAvailable) ? 'block' : 'none';
+            };
+            document.querySelectorAll('.footer-item').forEach(item => {
+                item.onclick = () => {
+                    const action = item.getAttribute('data-action');
+                    if (action === 'phone') window.location.href = 'tel:+212523292425';
+                    else if (action === 'whatsapp') window.open('https://wa.me/212662728799', '_blank');
+                    else if (action === 'facebook') window.open('https://www.facebook.com/share/17gvTZEpeG/', '_blank');
+                    else if (action === 'location') window.open('https://maps.app.goo.gl/BQqxtArbwskyQouGA?g_st=aw', '_blank');
+                };
+            });
+        }
+
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                if (Notification.permission === 'default') {
+                    alert("🔔 لتلقي إشعارات حول طلبك (جاهز، في الطريق)، يُرجى الضغط على \"السماح\" في النافذة المنبثقة.");
+                    Notification.requestPermission();
+                }
+            } else {
+                console.log("المتصفح لا يدعم الإشعارات");
+            }
+        }
+
+        document.getElementById('closeProductsPageBtn').onclick = () => {
+            document.getElementById('categoryProductsPage').style.display = 'none';
+            document.getElementById('customerView').style.display = 'block';
+            currentCategoryId = null;
+            if (categorySwiper) categorySwiper.update();
+        };
+        document.getElementById('closeArchiveModal').onclick = () => {
+            document.getElementById('archiveModal').style.display = 'none';
+        };
+
         window.addEventListener('hashchange', handleRoute);
-        window.addEventListener('load', async () => { ... });
+        window.addEventListener('load', async () => {
+            await loadFromCloud();          // انتظار تحميل البيانات
+            handleRoute();                  // عرض الصفحة المناسبة
+            // إخفاء شاشة التحميل بعد التأكد من اكتمال العرض
+            setTimeout(() => {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => overlay.style.display = 'none', 300);
+                }
+            }, 200);
+            if (localStorage.getItem('orders')) orders = JSON.parse(localStorage.getItem('orders'));
+            requestNotificationPermission();
+        });
     </script>
 </body>
 </html>
