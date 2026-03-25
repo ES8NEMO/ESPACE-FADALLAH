@@ -452,6 +452,26 @@
             overflow-y: auto;
         }
         .cart-drawer.open { right: 0; }
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+            transition: 0.2s;
+        }
+        .cart-close:hover {
+            color: #e74c3c;
+            transform: scale(1.1);
+        }
         .cart-overlay {
             position: fixed;
             top: 0;
@@ -533,6 +553,35 @@
             text-align: center;
             font-size: 0.8rem;
         }
+        .kitchen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .kitchen-header h2 {
+            margin: 0;
+        }
+        .archive-icon {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+        .archive-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
         .kitchen-tabs {
             display: flex;
             gap: 10px;
@@ -556,6 +605,22 @@
             background: #93C572;
             color: white;
             box-shadow: 0 2px 8px rgba(147,197,114,0.3);
+        }
+        .archive-modal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .archive-order-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 15px;
+            background: white;
+            transition: 0.2s;
+        }
+        .archive-order-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         footer {
             background: #fafcf8;
@@ -606,7 +671,7 @@
             padding: 20px;
         }
 
-        /* Enhanced Mobile Styles */
+        /* Mobile styles */
         @media (max-width: 640px) {
             header {
                 padding: 10px 12px;
@@ -730,7 +795,6 @@
             }
         }
 
-        /* Small devices (under 400px) */
         @media (max-width: 400px) {
             .category-card {
                 height: 45vh;
@@ -755,7 +819,6 @@
             }
         }
 
-        /* Landscape orientation fixes */
         @media (max-height: 500px) and (orientation: landscape) {
             .category-card {
                 height: 70vh;
@@ -823,7 +886,10 @@
 
     <div class="cart-overlay" id="cartOverlay"></div>
     <div class="cart-drawer" id="cartDrawer">
-        <h3>🛒 سلة الطلبات</h3>
+        <div class="cart-header">
+            <h3>🛒 سلة الطلبات</h3>
+            <button class="cart-close" id="cartCloseBtn">✖</button>
+        </div>
         <div id="cartItems"></div>
         <div id="cartTotal" style="font-weight: bold; margin: 15px 0;"></div>
         <button class="btn-3d" id="checkoutBtn">إتمام الطلب</button>
@@ -882,6 +948,15 @@
             <div id="sizesList"></div>
             <button id="addNewSizeBtn" class="btn-3d" style="margin-top:12px;">+ إضافة حجم جديد</button>
             <button id="closeSizesModal" class="btn-3d" style="background:#6c757d; box-shadow:none;">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- Modal الأرشيف -->
+    <div class="modal" id="archiveModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <h3>📦 أرشيف الطلبات المكتملة</h3>
+            <div id="archiveContent"></div>
+            <button class="btn-3d" id="closeArchiveModal" style="margin-top: 15px;">إغلاق</button>
         </div>
     </div>
 
@@ -1107,6 +1182,21 @@
                 }
                 grid.appendChild(card);
                 
+                // Add size management button in dev mode
+                if (isDevMode) {
+                    const priceDiv = card.querySelector('.product-price-new');
+                    const sizeManageBtn = document.createElement('button');
+                    sizeManageBtn.className = 'edit-icon';
+                    sizeManageBtn.style.marginLeft = '5px';
+                    sizeManageBtn.innerHTML = '<i class="fas fa-ruler"></i>';
+                    sizeManageBtn.title = 'إدارة الأحجام';
+                    sizeManageBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        openManageSizes();
+                    };
+                    priceDiv.appendChild(sizeManageBtn);
+                }
+
                 const qtySpan = document.getElementById(`qty-${categoryId}-${idx}`);
                 const priceSpan = document.getElementById(`price-${categoryId}-${idx}`);
                 const sizeSelect = card.querySelector('.size-select');
@@ -1117,6 +1207,21 @@
                     const qty = parseInt(qtySpan.innerText);
                     const total = (basePrice + extra) * qty;
                     priceSpan.innerHTML = `${total} MAD ${isDevMode ? `<button class="delete-icon delete-product" data-cat="${categoryId}" data-idx="${idx}"><i class="fas fa-trash-alt"></i></button>` : ''}`;
+                    if (isDevMode) {
+                        const priceDiv = priceSpan;
+                        if (!priceDiv.querySelector('.edit-icon[title="إدارة الأحجام"]')) {
+                            const sizeManageBtn = document.createElement('button');
+                            sizeManageBtn.className = 'edit-icon';
+                            sizeManageBtn.style.marginLeft = '5px';
+                            sizeManageBtn.innerHTML = '<i class="fas fa-ruler"></i>';
+                            sizeManageBtn.title = 'إدارة الأحجام';
+                            sizeManageBtn.onclick = (e) => {
+                                e.stopPropagation();
+                                openManageSizes();
+                            };
+                            priceDiv.appendChild(sizeManageBtn);
+                        }
+                    }
                 };
                 card.querySelector('.qty-minus').addEventListener('click', () => {
                     let qty = parseInt(qtySpan.innerText);
@@ -1350,7 +1455,7 @@
             attachCustomerEvents();
             renderCategories();
             updateStatusBanner();
-            requestNotificationPermission(); // request permission on customer view
+            requestNotificationPermission();
         }
 
         function showDevView() {
@@ -1383,7 +1488,7 @@
                     alert("👋 تم الخروج من وضع المطور");
                 }
             };
-            requestNotificationPermission(); // also request in dev mode
+            requestNotificationPermission();
         }
 
         function showKitchenView() {
@@ -1399,53 +1504,30 @@
 
         function renderKitchenPanel() {
             const container = document.getElementById('kitchenPanelContent');
-            // Define tabs for active and archive periods
+            // Define tabs for active and archive periods (active only, archive is separate modal)
             const tabs = [
-                { id: 'active', name: '🔄 الطلبات النشطة' },
-                { id: 'today', name: '📅 اليوم' },
-                { id: 'yesterday', name: '📆 أمس' },
-                { id: 'lastweek', name: '🗓️ الأسبوع الماضي' },
-                { id: 'lastmonth', name: '📅 الشهر الماضي' }
+                { id: 'active', name: '🔄 الطلبات النشطة' }
             ];
             let activeTab = 'active';
-            // We'll store selected tab in a variable that persists across rerenders
             if (!window.kitchenActiveTab) window.kitchenActiveTab = 'active';
             activeTab = window.kitchenActiveTab;
 
             const now = new Date();
             const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const yesterdayStart = new Date(todayStart);
-            yesterdayStart.setDate(yesterdayStart.getDate() - 1);
-            const lastWeekStart = new Date(todayStart);
-            lastWeekStart.setDate(lastWeekStart.getDate() - 7);
-            const lastMonthStart = new Date(todayStart);
-            lastMonthStart.setMonth(lastMonthStart.getMonth() - 1);
-
-            // Filter orders
+            
+            // Filter orders: active orders (status !== 'ready')
             const activeOrders = orders.filter(o => o.status !== 'ready');
-            const readyOrders = orders.filter(o => o.status === 'ready');
-            const todayOrders = readyOrders.filter(o => new Date(o.timestamp) >= todayStart);
-            const yesterdayOrders = readyOrders.filter(o => {
-                const orderDate = new Date(o.timestamp);
-                return orderDate >= yesterdayStart && orderDate < todayStart;
-            });
-            const lastWeekOrders = readyOrders.filter(o => {
-                const orderDate = new Date(o.timestamp);
-                return orderDate >= lastWeekStart && orderDate < yesterdayStart;
-            });
-            const lastMonthOrders = readyOrders.filter(o => {
-                const orderDate = new Date(o.timestamp);
-                return orderDate >= lastMonthStart && orderDate < lastWeekStart;
-            });
+            let ordersToShow = activeOrders;
 
-            let ordersToShow = [];
-            if (activeTab === 'active') ordersToShow = activeOrders;
-            else if (activeTab === 'today') ordersToShow = todayOrders;
-            else if (activeTab === 'yesterday') ordersToShow = yesterdayOrders;
-            else if (activeTab === 'lastweek') ordersToShow = lastWeekOrders;
-            else if (activeTab === 'lastmonth') ordersToShow = lastMonthOrders;
+            // Render header with archive icon
+            let headerHtml = `
+                <div class="kitchen-header">
+                    <h2>🍽️ لوحة المطبخ</h2>
+                    <button class="archive-icon" id="openArchiveBtn"><i class="fas fa-archive"></i> الأرشيف</button>
+                </div>
+            `;
 
-            // Render tabs
+            // Render tabs (only active tab is shown, but we keep the structure for consistency)
             let tabsHtml = '<div class="kitchen-tabs">';
             tabs.forEach(tab => {
                 tabsHtml += `<button class="kitchen-tab ${activeTab === tab.id ? 'active' : ''}" data-tab="${tab.id}">${tab.name}</button>`;
@@ -1485,11 +1567,14 @@
                     </div>
                 `;
             });
-            if (ordersToShow.length === 0) ordersHtml = '<div style="text-align:center; padding:30px;">لا توجد طلبات في هذا القسم</div>';
+            if (ordersToShow.length === 0) ordersHtml = '<div style="text-align:center; padding:30px;">لا توجد طلبات نشطة</div>';
 
-            container.innerHTML = `<div><h2>🍽️ لوحة المطبخ</h2>${tabsHtml}<div id="kitchenOrdersList">${ordersHtml}</div></div>`;
+            container.innerHTML = headerHtml + tabsHtml + `<div id="kitchenOrdersList">${ordersHtml}</div>`;
 
-            // Attach tab click events
+            // Attach archive button event
+            document.getElementById('openArchiveBtn').onclick = () => showArchiveModal();
+
+            // Attach tab click events (only active tab)
             document.querySelectorAll('.kitchen-tab').forEach(btn => {
                 btn.onclick = () => {
                     window.kitchenActiveTab = btn.getAttribute('data-tab');
@@ -1504,11 +1589,10 @@
                     const newStatus = btn.getAttribute('data-status');
                     const order = orders.find(o => o.id == id);
                     if (order) {
-                        // If new status is 'ready', send notification to customer
                         if (newStatus === 'ready' && order.status !== 'ready') {
-                            // Prepare notification message based on delivery method and customer language
+                            // Send notification
                             let message = '';
-                            const lang = order.customerLang || 'ar'; // fallback to arabic
+                            const lang = order.customerLang || 'ar';
                             if (order.method === 'pickup') {
                                 if (lang === 'ar') message = '🍔 تعال خذ طلبك! ✅';
                                 else if (lang === 'fr') message = '🍔 Venez chercher votre commande ! ✅';
@@ -1518,17 +1602,15 @@
                                 else if (lang === 'fr') message = '🚚 Votre commande arrive ! ✅';
                                 else message = '🚚 Your order is on its way! ✅';
                             }
-                            // Send notification if permission granted
                             if (Notification.permission === 'granted') {
                                 new Notification(`ESPACE FADALLAH - طلب #${order.id}`, {
                                     body: message,
                                     icon: 'https://placehold.co/64x64/93C572/FFFFFF?text=EF'
                                 });
                             }
-                            // Store message in order to display in tracking modal
                             order.notificationMessage = message;
                             localStorage.setItem('orders', JSON.stringify(orders));
-                            // Update tracking modal if open for this order
+                            // Update tracking modal if open
                             const trackingModal = document.getElementById('trackingModal');
                             if (trackingModal.style.display === 'flex') {
                                 const currentOrderId = document.getElementById('trackOrderId').innerText;
@@ -1544,7 +1626,7 @@
                         order.status = newStatus;
                         localStorage.setItem('orders', JSON.stringify(orders));
                         renderKitchenPanel();
-                        // Also update tracking status if modal open for this order
+                        // Update tracking modal if open
                         const trackingModal = document.getElementById('trackingModal');
                         if (trackingModal.style.display === 'flex') {
                             const currentOrderId = document.getElementById('trackOrderId').innerText;
@@ -1590,6 +1672,68 @@
             });
         }
 
+        function showArchiveModal() {
+            const modal = document.getElementById('archiveModal');
+            const container = document.getElementById('archiveContent');
+            const readyOrders = orders.filter(o => o.status === 'ready');
+            // Group by periods
+            const now = new Date();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const yesterdayStart = new Date(todayStart);
+            yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+            const lastWeekStart = new Date(todayStart);
+            lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+            const lastMonthStart = new Date(todayStart);
+            lastMonthStart.setMonth(lastMonthStart.getMonth() - 1);
+
+            const groups = {
+                today: readyOrders.filter(o => new Date(o.timestamp) >= todayStart),
+                yesterday: readyOrders.filter(o => {
+                    const d = new Date(o.timestamp);
+                    return d >= yesterdayStart && d < todayStart;
+                }),
+                lastWeek: readyOrders.filter(o => {
+                    const d = new Date(o.timestamp);
+                    return d >= lastWeekStart && d < yesterdayStart;
+                }),
+                lastMonth: readyOrders.filter(o => {
+                    const d = new Date(o.timestamp);
+                    return d >= lastMonthStart && d < lastWeekStart;
+                })
+            };
+
+            let html = '';
+            for (const [period, ordersList] of Object.entries(groups)) {
+                if (ordersList.length === 0) continue;
+                let periodName = '';
+                if (period === 'today') periodName = '📅 اليوم';
+                else if (period === 'yesterday') periodName = '📆 أمس';
+                else if (period === 'lastWeek') periodName = '🗓️ الأسبوع الماضي';
+                else if (period === 'lastMonth') periodName = '📅 الشهر الماضي';
+                html += `<h4 style="margin: 20px 0 10px 0; color: #93C572;">${periodName}</h4>`;
+                html += '<div class="archive-modal-grid">';
+                ordersList.forEach(order => {
+                    html += `
+                        <div class="archive-order-card">
+                            <strong>طلب #${order.id}</strong><br>
+                            <strong>الزبون:</strong> ${order.customer.name}<br>
+                            <strong>رقم واتساب:</strong> ${order.customer.whatsapp}<br>
+                            <strong>التاريخ:</strong> ${new Date(order.timestamp).toLocaleString()}<br>
+                            <hr>
+                            <strong>المنتجات:</strong><br>
+                            ${order.items.map(item => `${item.quantity} × ${t(item)} ${item.size ? '(' + t(item.size) + ')' : ''}`).join('<br>')}
+                            <br><strong>المجموع:</strong> ${order.total} MAD
+                            ${order.notes ? `<br><strong>ملاحظات:</strong> ${order.notes}` : ''}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            if (html === '') html = '<div style="text-align:center; padding:30px;">لا توجد طلبات مكتملة في الأرشيف</div>';
+            container.innerHTML = html;
+            modal.style.display = 'flex';
+        }
+
         function checkAuth(role, callback) {
             const password = role === 'dev' ? DEV_PASSWORD : KITCHEN_PASSWORD;
             const input = prompt(`أدخل كلمة المرور للوصول إلى ${role === 'dev' ? 'لوحة المطور' : 'لوحة المطبخ'}:`);
@@ -1610,6 +1754,10 @@
             if (cartBtn) cartBtn.onclick = () => {
                 document.getElementById('cartDrawer').classList.add('open');
                 document.getElementById('cartOverlay').style.display = 'block';
+            };
+            document.getElementById('cartCloseBtn').onclick = () => {
+                document.getElementById('cartDrawer').classList.remove('open');
+                document.getElementById('cartOverlay').style.display = 'none';
             };
             document.getElementById('cartOverlay').onclick = () => {
                 document.getElementById('cartDrawer').classList.remove('open');
@@ -1641,7 +1789,7 @@
                     notes,
                     timestamp: new Date().toISOString(),
                     estimatedTime: null,
-                    customerLang: currentLang  // store the language at order time
+                    customerLang: currentLang
                 };
                 orders.push(order);
                 localStorage.setItem('orders', JSON.stringify(orders));
@@ -1653,7 +1801,6 @@
                 document.getElementById('notificationMessage').style.display = 'none';
                 document.getElementById('trackingModal').style.display = 'flex';
                 
-                // Auto-refresh tracking every 5 seconds
                 const interval = setInterval(() => {
                     const updatedOrder = orders.find(o => o.id == orderId);
                     if (updatedOrder) {
@@ -1688,7 +1835,6 @@
                         }
                     }
                 }, 5000);
-                
                 window.trackingInterval = interval;
             };
             document.getElementById('closeTracking').onclick = () => {
@@ -1711,9 +1857,13 @@
 
         function requestNotificationPermission() {
             if ('Notification' in window) {
-                if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+                if (Notification.permission === 'default') {
+                    // Show explanation before asking
+                    alert("🔔 لتلقي إشعارات حول طلبك (جاهز، في الطريق)، يُرجى الضغط على \"السماح\" في النافذة المنبثقة.");
                     Notification.requestPermission();
                 }
+            } else {
+                console.log("المتصفح لا يدعم الإشعارات");
             }
         }
 
@@ -1722,6 +1872,9 @@
             document.getElementById('customerView').style.display = 'block';
             currentCategoryId = null;
             if (categorySwiper) categorySwiper.update();
+        };
+        document.getElementById('closeArchiveModal').onclick = () => {
+            document.getElementById('archiveModal').style.display = 'none';
         };
 
         window.addEventListener('hashchange', handleRoute);
