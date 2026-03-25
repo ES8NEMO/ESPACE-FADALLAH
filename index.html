@@ -533,6 +533,30 @@
             text-align: center;
             font-size: 0.8rem;
         }
+        .kitchen-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 50px;
+        }
+        .kitchen-tab {
+            background: transparent;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            color: #6c757d;
+        }
+        .kitchen-tab.active {
+            background: #93C572;
+            color: white;
+            box-shadow: 0 2px 8px rgba(147,197,114,0.3);
+        }
         footer {
             background: #fafcf8;
             padding: 32px 16px;
@@ -826,6 +850,7 @@
         <div class="modal-content">
             <h3>📦 طلبك رقم #<span id="trackOrderId"></span></h3>
             <p>الحالة: <strong id="trackStatus"></strong></p>
+            <div id="notificationMessage" style="margin: 12px 0; padding: 10px; background: #e8f5e9; border-radius: 20px; display: none;"></div>
             <div style="margin: 20px 0; background: #f0f7ec; padding: 12px; border-radius: 28px;">
                 <div>✅ تم الاستلام</div>
                 <div>🔄 قيد التجهيز</div>
@@ -1325,6 +1350,7 @@
             attachCustomerEvents();
             renderCategories();
             updateStatusBanner();
+            requestNotificationPermission(); // request permission on customer view
         }
 
         function showDevView() {
@@ -1357,6 +1383,7 @@
                     alert("👋 تم الخروج من وضع المطور");
                 }
             };
+            requestNotificationPermission(); // also request in dev mode
         }
 
         function showKitchenView() {
@@ -1372,17 +1399,68 @@
 
         function renderKitchenPanel() {
             const container = document.getElementById('kitchenPanelContent');
-            container.innerHTML = `<div><h2>🍽️ لوحة المطبخ</h2><div id="kitchenOrdersList"></div></div>`;
-            const ordersDiv = document.getElementById('kitchenOrdersList');
-            ordersDiv.innerHTML = '';
-            orders.forEach(order => {
+            // Define tabs for active and archive periods
+            const tabs = [
+                { id: 'active', name: '🔄 الطلبات النشطة' },
+                { id: 'today', name: '📅 اليوم' },
+                { id: 'yesterday', name: '📆 أمس' },
+                { id: 'lastweek', name: '🗓️ الأسبوع الماضي' },
+                { id: 'lastmonth', name: '📅 الشهر الماضي' }
+            ];
+            let activeTab = 'active';
+            // We'll store selected tab in a variable that persists across rerenders
+            if (!window.kitchenActiveTab) window.kitchenActiveTab = 'active';
+            activeTab = window.kitchenActiveTab;
+
+            const now = new Date();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const yesterdayStart = new Date(todayStart);
+            yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+            const lastWeekStart = new Date(todayStart);
+            lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+            const lastMonthStart = new Date(todayStart);
+            lastMonthStart.setMonth(lastMonthStart.getMonth() - 1);
+
+            // Filter orders
+            const activeOrders = orders.filter(o => o.status !== 'ready');
+            const readyOrders = orders.filter(o => o.status === 'ready');
+            const todayOrders = readyOrders.filter(o => new Date(o.timestamp) >= todayStart);
+            const yesterdayOrders = readyOrders.filter(o => {
+                const orderDate = new Date(o.timestamp);
+                return orderDate >= yesterdayStart && orderDate < todayStart;
+            });
+            const lastWeekOrders = readyOrders.filter(o => {
+                const orderDate = new Date(o.timestamp);
+                return orderDate >= lastWeekStart && orderDate < yesterdayStart;
+            });
+            const lastMonthOrders = readyOrders.filter(o => {
+                const orderDate = new Date(o.timestamp);
+                return orderDate >= lastMonthStart && orderDate < lastWeekStart;
+            });
+
+            let ordersToShow = [];
+            if (activeTab === 'active') ordersToShow = activeOrders;
+            else if (activeTab === 'today') ordersToShow = todayOrders;
+            else if (activeTab === 'yesterday') ordersToShow = yesterdayOrders;
+            else if (activeTab === 'lastweek') ordersToShow = lastWeekOrders;
+            else if (activeTab === 'lastmonth') ordersToShow = lastMonthOrders;
+
+            // Render tabs
+            let tabsHtml = '<div class="kitchen-tabs">';
+            tabs.forEach(tab => {
+                tabsHtml += `<button class="kitchen-tab ${activeTab === tab.id ? 'active' : ''}" data-tab="${tab.id}">${tab.name}</button>`;
+            });
+            tabsHtml += '</div>';
+
+            let ordersHtml = '';
+            ordersToShow.forEach(order => {
                 const statusMap = {
                     'received': 'تم الاستلام',
                     'preparing': 'قيد التجهيز',
                     'waiting': 'لم يصل دورك',
                     'ready': 'جاهز'
                 };
-                ordersDiv.innerHTML += `
+                ordersHtml += `
                     <div style="border:2px solid #e0e0e0; margin-bottom:15px; padding:15px; border-radius:20px; background:white;">
                         <strong>طلب #${order.id}</strong><br>
                         <strong>الزبون:</strong> ${order.customer.name}<br>
@@ -1407,16 +1485,66 @@
                     </div>
                 `;
             });
+            if (ordersToShow.length === 0) ordersHtml = '<div style="text-align:center; padding:30px;">لا توجد طلبات في هذا القسم</div>';
+
+            container.innerHTML = `<div><h2>🍽️ لوحة المطبخ</h2>${tabsHtml}<div id="kitchenOrdersList">${ordersHtml}</div></div>`;
+
+            // Attach tab click events
+            document.querySelectorAll('.kitchen-tab').forEach(btn => {
+                btn.onclick = () => {
+                    window.kitchenActiveTab = btn.getAttribute('data-tab');
+                    renderKitchenPanel();
+                };
+            });
+
+            // Attach status change events
             document.querySelectorAll('.status-btn').forEach(btn => {
                 btn.onclick = () => {
                     const id = btn.getAttribute('data-id');
                     const newStatus = btn.getAttribute('data-status');
                     const order = orders.find(o => o.id == id);
                     if (order) {
+                        // If new status is 'ready', send notification to customer
+                        if (newStatus === 'ready' && order.status !== 'ready') {
+                            // Prepare notification message based on delivery method and customer language
+                            let message = '';
+                            const lang = order.customerLang || 'ar'; // fallback to arabic
+                            if (order.method === 'pickup') {
+                                if (lang === 'ar') message = '🍔 تعال خذ طلبك! ✅';
+                                else if (lang === 'fr') message = '🍔 Venez chercher votre commande ! ✅';
+                                else message = '🍔 Come pick up your order! ✅';
+                            } else {
+                                if (lang === 'ar') message = '🚚 طلبك قادم إليك! ✅';
+                                else if (lang === 'fr') message = '🚚 Votre commande arrive ! ✅';
+                                else message = '🚚 Your order is on its way! ✅';
+                            }
+                            // Send notification if permission granted
+                            if (Notification.permission === 'granted') {
+                                new Notification(`ESPACE FADALLAH - طلب #${order.id}`, {
+                                    body: message,
+                                    icon: 'https://placehold.co/64x64/93C572/FFFFFF?text=EF'
+                                });
+                            }
+                            // Store message in order to display in tracking modal
+                            order.notificationMessage = message;
+                            localStorage.setItem('orders', JSON.stringify(orders));
+                            // Update tracking modal if open for this order
+                            const trackingModal = document.getElementById('trackingModal');
+                            if (trackingModal.style.display === 'flex') {
+                                const currentOrderId = document.getElementById('trackOrderId').innerText;
+                                if (currentOrderId == id) {
+                                    const msgDiv = document.getElementById('notificationMessage');
+                                    if (msgDiv) {
+                                        msgDiv.innerText = message;
+                                        msgDiv.style.display = 'block';
+                                    }
+                                }
+                            }
+                        }
                         order.status = newStatus;
                         localStorage.setItem('orders', JSON.stringify(orders));
                         renderKitchenPanel();
-                        // Notify customer via tracking modal if open
+                        // Also update tracking status if modal open for this order
                         const trackingModal = document.getElementById('trackingModal');
                         if (trackingModal.style.display === 'flex') {
                             const currentOrderId = document.getElementById('trackOrderId').innerText;
@@ -1428,11 +1556,20 @@
                                     'ready': 'جاهز'
                                 };
                                 document.getElementById('trackStatus').innerText = statusMap[newStatus] || newStatus;
+                                if (order.notificationMessage) {
+                                    const msgDiv = document.getElementById('notificationMessage');
+                                    if (msgDiv) {
+                                        msgDiv.innerText = order.notificationMessage;
+                                        msgDiv.style.display = 'block';
+                                    }
+                                }
                             }
                         }
                     }
                 };
             });
+
+            // Attach set time events
             document.querySelectorAll('.set-time-btn').forEach(btn => {
                 btn.onclick = () => {
                     const id = btn.getAttribute('data-id');
@@ -1503,7 +1640,8 @@
                     method,
                     notes,
                     timestamp: new Date().toISOString(),
-                    estimatedTime: null
+                    estimatedTime: null,
+                    customerLang: currentLang  // store the language at order time
                 };
                 orders.push(order);
                 localStorage.setItem('orders', JSON.stringify(orders));
@@ -1512,6 +1650,7 @@
                 document.getElementById('checkoutModal').style.display = 'none';
                 document.getElementById('trackOrderId').innerText = orderId;
                 document.getElementById('trackStatus').innerText = 'تم الاستلام';
+                document.getElementById('notificationMessage').style.display = 'none';
                 document.getElementById('trackingModal').style.display = 'flex';
                 
                 // Auto-refresh tracking every 5 seconds
@@ -1540,10 +1679,16 @@
                                 document.getElementById('estimatedTimeDisplay').innerHTML = `⏱️ الوقت المتوقع: ${updatedOrder.estimatedTime} دقيقة`;
                             }
                         }
+                        if (updatedOrder.notificationMessage) {
+                            const msgDiv = document.getElementById('notificationMessage');
+                            if (msgDiv) {
+                                msgDiv.innerText = updatedOrder.notificationMessage;
+                                msgDiv.style.display = 'block';
+                            }
+                        }
                     }
                 }, 5000);
                 
-                // Store interval ID to clear later if needed
                 window.trackingInterval = interval;
             };
             document.getElementById('closeTracking').onclick = () => {
@@ -1564,6 +1709,14 @@
             });
         }
 
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+                    Notification.requestPermission();
+                }
+            }
+        }
+
         document.getElementById('closeProductsPageBtn').onclick = () => {
             document.getElementById('categoryProductsPage').style.display = 'none';
             document.getElementById('customerView').style.display = 'block';
@@ -1580,6 +1733,7 @@
                 setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 300);
             }, 100);
             if (localStorage.getItem('orders')) orders = JSON.parse(localStorage.getItem('orders'));
+            requestNotificationPermission();
         });
     </script>
 </body>
