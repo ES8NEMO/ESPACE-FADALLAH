@@ -1235,6 +1235,8 @@
                 });
                 sizeSelect.addEventListener('change', updatePriceDisplay);
                 updatePriceDisplay();
+
+                // Attach add-to-cart event directly
                 const addBtn = card.querySelector('.add-to-cart-new');
                 addBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -1247,6 +1249,33 @@
                     addToCartWithDetails(prod, qty, selectedSize, "");
                 });
             });
+            
+            // Additional delegated event listener for mobile (ensures clicks on dynamically added buttons work)
+            grid.addEventListener('click', (e) => {
+                const addBtn = e.target.closest('.add-to-cart-new');
+                if (addBtn && addBtn.parentElement && addBtn.parentElement.parentElement) {
+                    const card = addBtn.closest('.product-card-new');
+                    if (card) {
+                        const idx = card.getAttribute('data-product-idx');
+                        const catId = card.getAttribute('data-category');
+                        if (idx !== null && catId) {
+                            const prod = productsData[catId][parseInt(idx)];
+                            if (!prod) return;
+                            if (!restaurantOpen) { alert("المطعم مغلق حالياً"); return; }
+                            if (!prod.available) { alert("هذا المنتج غير متوفر"); return; }
+                            const qtySpan = document.getElementById(`qty-${catId}-${idx}`);
+                            const sizeSelect = card.querySelector('.size-select');
+                            if (!qtySpan || !sizeSelect) return;
+                            const qty = parseInt(qtySpan.innerText);
+                            const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+                            const sizeId = selectedOption.value;
+                            const selectedSize = sizes.find(s => s.id === sizeId);
+                            addToCartWithDetails(prod, qty, selectedSize, "");
+                        }
+                    }
+                }
+            });
+
             if (isDevMode) {
                 document.querySelectorAll('.edit-product').forEach(btn => {
                     btn.addEventListener('click', (e) => {
@@ -1858,7 +1887,6 @@
         function requestNotificationPermission() {
             if ('Notification' in window) {
                 if (Notification.permission === 'default') {
-                    // Show explanation before asking
                     alert("🔔 لتلقي إشعارات حول طلبك (جاهز، في الطريق)، يُرجى الضغط على \"السماح\" في النافذة المنبثقة.");
                     Notification.requestPermission();
                 }
