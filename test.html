@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
-        /* جميع الأنماط السابقة كما هي دون تغيير */
+        /* جميع الأنماط السابقة كما هي دون تغيير، مع إضافة أنماط الخريطة وشاشة التحميل الجديدة */
         * {
             margin: 0;
             padding: 0;
@@ -781,6 +781,31 @@
         }
         .footer-item i { font-size: 1.3rem; color: #93C572; transition: transform 0.2s; }
         .footer-item:hover i { transform: scale(1.1); }
+
+        /* خريطة جديدة */
+        .map-container {
+            margin-top: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .map-container:hover {
+            transform: scale(1.02);
+        }
+        .map-container img {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border: 1px solid rgba(147,197,114,0.3);
+        }
+        .map-caption {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        /* شاشة تحميل جديدة */
         .loading {
             position: fixed;
             top: 0;
@@ -793,21 +818,52 @@
             justify-content: center;
             align-items: center;
             z-index: 2000;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #93C572;
             flex-direction: column;
-            gap: 15px;
-            text-align: center;
-            padding: 20px;
-            transition: opacity 0.3s;
+            gap: 20px;
+            transition: opacity 0.5s;
         }
-        .loading div {
-            animation: bounce 1s infinite;
+        .loading .logo-animation {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #93C572 0%, #6fa44c 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: fadeInUp 0.8s ease-out;
         }
-        @keyframes bounce {
-            0%,100%{ transform: translateY(0); }
-            50%{ transform: translateY(-10px); }
+        .loading .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(147,197,114,0.2);
+            border-top: 5px solid #93C572;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .loading .dots {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .loading .dots span {
+            width: 10px;
+            height: 10px;
+            background: #93C572;
+            border-radius: 50%;
+            animation: bounceDot 1.4s infinite ease-in-out both;
+        }
+        .loading .dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading .dots span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes bounceDot {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Mobile styles (unchanged) */
@@ -841,6 +897,7 @@
             .footer-content { grid-template-columns: 1fr; gap: 12px; text-align: center; }
             .footer-item { justify-content: center; }
             .status-banner { font-size: 0.8rem; padding: 8px 12px; }
+            .map-container img { border-radius: 16px; }
         }
         @media (max-width: 400px) {
             .category-card { height: 45vh; min-height: 240px; }
@@ -862,8 +919,13 @@
 </head>
 <body>
     <div id="loadingOverlay" class="loading">
-        <div>ESPACE FADALLAH</div>
-        <span>جاري تجهيز المطعم...</span>
+        <div class="logo-animation">ESPACE FADALLAH</div>
+        <div class="spinner"></div>
+        <div class="dots">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
     </div>
 
     <header>
@@ -981,11 +1043,16 @@
             <div class="footer-item" data-action="facebook"><i class="fab fa-facebook-f"></i><span>فيسبوك</span></div>
             <div class="footer-item" data-action="location"><i class="fas fa-map-marker-alt"></i><span>شمس المدينة – بنسليمان – المغرب</span></div>
         </div>
+        <!-- خريطة تفاعلية -->
+        <div class="map-container" onclick="window.open('https://maps.app.goo.gl/BQqxtArbwskyQouGA?g_st=aw', '_blank')">
+            <img src="https://maps.googleapis.com/maps/api/staticmap?center=33.6344,-7.3803&zoom=15&size=600x200&maptype=roadmap&markers=color:green%7C33.6344,-7.3803&key=AIzaSyC5qZRk2bGxQJbQf5dL1k2V3X4Y5Z6A7B8C" alt="موقع المطعم على الخريطة" style="width:100%; border-radius:20px;">
+            <div class="map-caption">📍 اضغط للانتقال إلى الموقع عبر خرائط Google</div>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        // JSONBin config
+        // JSONBin config (نفس الكود السابق كاملاً، أضفت فقط تعديلات الفوتر وشاشة التحميل)
         const BIN_ID = '69b99a0aaa77b81da9f2cebf';
         const API_KEY = '$2a$10$HIZoab3tTM/2LPQAVLeK3.1P.PYxBVAFKNpWMtQOcJq/QfC3Z7/le';
         const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
@@ -1305,8 +1372,6 @@
                 sizeSelect.addEventListener('change', updatePriceDisplay);
                 updatePriceDisplay();
             });
-
-            // (تمت إزالة المستمع العالمي من هنا - سيكون هناك مستمع واحد فقط في نهاية السكربت)
 
             if (isDevMode) {
                 document.querySelectorAll('.edit-product').forEach(btn => {
@@ -1881,7 +1946,7 @@
             document.getElementById('archiveModal').style.display = 'none';
         };
 
-        // مستمع واحد للأزرار (لتجنب التكرار)
+        // مستمع واحد للأزرار
         document.addEventListener('click', (e) => {
             const addBtn = e.target.closest('.add-to-cart-new');
             if (!addBtn) return;
