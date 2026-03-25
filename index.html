@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
+        /* جميع الأنماط كما هي دون تغيير */
         * {
             margin: 0;
             padding: 0;
@@ -1181,7 +1182,7 @@
                     card.appendChild(overlay);
                 }
                 grid.appendChild(card);
-                
+
                 // Add size management button in dev mode
                 if (isDevMode) {
                     const priceDiv = card.querySelector('.product-price-new');
@@ -1235,46 +1236,10 @@
                 });
                 sizeSelect.addEventListener('change', updatePriceDisplay);
                 updatePriceDisplay();
+            });
 
-                // Attach add-to-cart event directly
-                const addBtn = card.querySelector('.add-to-cart-new');
-                addBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (!restaurantOpen) { alert("المطعم مغلق حالياً"); return; }
-                    if (!prod.available) { alert("هذا المنتج غير متوفر"); return; }
-                    const qty = parseInt(qtySpan.innerText);
-                    const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
-                    const sizeId = selectedOption.value;
-                    const selectedSize = sizes.find(s => s.id === sizeId);
-                    addToCartWithDetails(prod, qty, selectedSize, "");
-                });
-            });
-            
-            // Additional delegated event listener for mobile (ensures clicks on dynamically added buttons work)
-            grid.addEventListener('click', (e) => {
-                const addBtn = e.target.closest('.add-to-cart-new');
-                if (addBtn && addBtn.parentElement && addBtn.parentElement.parentElement) {
-                    const card = addBtn.closest('.product-card-new');
-                    if (card) {
-                        const idx = card.getAttribute('data-product-idx');
-                        const catId = card.getAttribute('data-category');
-                        if (idx !== null && catId) {
-                            const prod = productsData[catId][parseInt(idx)];
-                            if (!prod) return;
-                            if (!restaurantOpen) { alert("المطعم مغلق حالياً"); return; }
-                            if (!prod.available) { alert("هذا المنتج غير متوفر"); return; }
-                            const qtySpan = document.getElementById(`qty-${catId}-${idx}`);
-                            const sizeSelect = card.querySelector('.size-select');
-                            if (!qtySpan || !sizeSelect) return;
-                            const qty = parseInt(qtySpan.innerText);
-                            const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
-                            const sizeId = selectedOption.value;
-                            const selectedSize = sizes.find(s => s.id === sizeId);
-                            addToCartWithDetails(prod, qty, selectedSize, "");
-                        }
-                    }
-                }
-            });
+            // REMOVED direct per-button event listeners – they are now handled globally
+            // We'll add a global document listener for add-to-cart buttons later
 
             if (isDevMode) {
                 document.querySelectorAll('.edit-product').forEach(btn => {
@@ -1301,6 +1266,49 @@
             document.getElementById('categoryProductsPage').style.display = 'block';
             document.getElementById('kitchenView').style.display = 'none';
         }
+
+        // Global event listener for add-to-cart buttons (works for all devices, including mobile)
+        document.addEventListener('click', (e) => {
+            const addBtn = e.target.closest('.add-to-cart-new');
+            if (!addBtn) return;
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Check if restaurant is open
+            if (!restaurantOpen) {
+                alert("المطعم مغلق حالياً");
+                return;
+            }
+
+            // Get product details from button attributes
+            const catId = addBtn.getAttribute('data-cat');
+            const idx = addBtn.getAttribute('data-idx');
+            if (!catId || idx === null) return;
+
+            const prod = productsData[catId] ? productsData[catId][parseInt(idx)] : null;
+            if (!prod) return;
+
+            if (!prod.available) {
+                alert("هذا المنتج غير متوفر");
+                return;
+            }
+
+            // Get the product card
+            const card = addBtn.closest('.product-card-new');
+            if (!card) return;
+
+            // Get quantity and size
+            const qtySpan = card.querySelector('.qty-value');
+            const sizeSelect = card.querySelector('.size-select');
+            if (!qtySpan || !sizeSelect) return;
+
+            const qty = parseInt(qtySpan.innerText);
+            const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+            const sizeId = selectedOption.value;
+            const selectedSize = sizes.find(s => s.id === sizeId);
+
+            addToCartWithDetails(prod, qty, selectedSize, "");
+        });
 
         function openProductForm(editData) {
             const modal = document.getElementById('productFormModal');
@@ -1533,22 +1541,14 @@
 
         function renderKitchenPanel() {
             const container = document.getElementById('kitchenPanelContent');
-            // Define tabs for active and archive periods (active only, archive is separate modal)
-            const tabs = [
-                { id: 'active', name: '🔄 الطلبات النشطة' }
-            ];
+            const tabs = [{ id: 'active', name: '🔄 الطلبات النشطة' }];
             let activeTab = 'active';
             if (!window.kitchenActiveTab) window.kitchenActiveTab = 'active';
             activeTab = window.kitchenActiveTab;
 
-            const now = new Date();
-            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            
-            // Filter orders: active orders (status !== 'ready')
             const activeOrders = orders.filter(o => o.status !== 'ready');
             let ordersToShow = activeOrders;
 
-            // Render header with archive icon
             let headerHtml = `
                 <div class="kitchen-header">
                     <h2>🍽️ لوحة المطبخ</h2>
@@ -1556,7 +1556,6 @@
                 </div>
             `;
 
-            // Render tabs (only active tab is shown, but we keep the structure for consistency)
             let tabsHtml = '<div class="kitchen-tabs">';
             tabs.forEach(tab => {
                 tabsHtml += `<button class="kitchen-tab ${activeTab === tab.id ? 'active' : ''}" data-tab="${tab.id}">${tab.name}</button>`;
@@ -1600,18 +1599,13 @@
 
             container.innerHTML = headerHtml + tabsHtml + `<div id="kitchenOrdersList">${ordersHtml}</div>`;
 
-            // Attach archive button event
             document.getElementById('openArchiveBtn').onclick = () => showArchiveModal();
-
-            // Attach tab click events (only active tab)
             document.querySelectorAll('.kitchen-tab').forEach(btn => {
                 btn.onclick = () => {
                     window.kitchenActiveTab = btn.getAttribute('data-tab');
                     renderKitchenPanel();
                 };
             });
-
-            // Attach status change events
             document.querySelectorAll('.status-btn').forEach(btn => {
                 btn.onclick = () => {
                     const id = btn.getAttribute('data-id');
@@ -1619,7 +1613,6 @@
                     const order = orders.find(o => o.id == id);
                     if (order) {
                         if (newStatus === 'ready' && order.status !== 'ready') {
-                            // Send notification
                             let message = '';
                             const lang = order.customerLang || 'ar';
                             if (order.method === 'pickup') {
@@ -1639,7 +1632,6 @@
                             }
                             order.notificationMessage = message;
                             localStorage.setItem('orders', JSON.stringify(orders));
-                            // Update tracking modal if open
                             const trackingModal = document.getElementById('trackingModal');
                             if (trackingModal.style.display === 'flex') {
                                 const currentOrderId = document.getElementById('trackOrderId').innerText;
@@ -1655,7 +1647,6 @@
                         order.status = newStatus;
                         localStorage.setItem('orders', JSON.stringify(orders));
                         renderKitchenPanel();
-                        // Update tracking modal if open
                         const trackingModal = document.getElementById('trackingModal');
                         if (trackingModal.style.display === 'flex') {
                             const currentOrderId = document.getElementById('trackOrderId').innerText;
@@ -1679,8 +1670,6 @@
                     }
                 };
             });
-
-            // Attach set time events
             document.querySelectorAll('.set-time-btn').forEach(btn => {
                 btn.onclick = () => {
                     const id = btn.getAttribute('data-id');
@@ -1705,7 +1694,6 @@
             const modal = document.getElementById('archiveModal');
             const container = document.getElementById('archiveContent');
             const readyOrders = orders.filter(o => o.status === 'ready');
-            // Group by periods
             const now = new Date();
             const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             const yesterdayStart = new Date(todayStart);
