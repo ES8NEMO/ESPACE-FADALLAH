@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
-        /* جميع الأنماط كما هي دون تغيير */
+        /* جميع الأنماط السابقة كما هي دون تغيير */
         * {
             margin: 0;
             padding: 0;
@@ -64,7 +64,6 @@
             background: #6fa44c;
         }
 
-        /* Hide swiper navigation arrows on the main slider */
         .categorySwiper .swiper-button-next,
         .categorySwiper .swiper-button-prev {
             display: none !important;
@@ -1307,28 +1306,7 @@
                 updatePriceDisplay();
             });
 
-            document.addEventListener('click', (e) => {
-                const addBtn = e.target.closest('.add-to-cart-new');
-                if (!addBtn) return;
-                e.preventDefault(); e.stopPropagation();
-                if (!restaurantOpen) { alert("المطعم مغلق حالياً"); return; }
-                const catId = addBtn.getAttribute('data-cat');
-                const idx = addBtn.getAttribute('data-idx');
-                if (!catId || idx === null) return;
-                const prod = productsData[catId] ? productsData[catId][parseInt(idx)] : null;
-                if (!prod) return;
-                if (!prod.available) { alert("هذا المنتج غير متوفر"); return; }
-                const card = addBtn.closest('.product-card-new');
-                if (!card) return;
-                const qtySpan = card.querySelector('.qty-value');
-                const sizeSelect = card.querySelector('.size-select');
-                if (!qtySpan || !sizeSelect) return;
-                const qty = parseInt(qtySpan.innerText);
-                const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
-                const sizeId = selectedOption.value;
-                const selectedSize = sizes.find(s => s.id === sizeId);
-                addToCartWithDetails(prod, qty, selectedSize, "");
-            });
+            // (تمت إزالة المستمع العالمي من هنا - سيكون هناك مستمع واحد فقط في نهاية السكربت)
 
             if (isDevMode) {
                 document.querySelectorAll('.edit-product').forEach(btn => {
@@ -1903,11 +1881,49 @@
             document.getElementById('archiveModal').style.display = 'none';
         };
 
+        // مستمع واحد للأزرار (لتجنب التكرار)
+        document.addEventListener('click', (e) => {
+            const addBtn = e.target.closest('.add-to-cart-new');
+            if (!addBtn) return;
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (!restaurantOpen) {
+                alert("المطعم مغلق حالياً");
+                return;
+            }
+
+            const catId = addBtn.getAttribute('data-cat');
+            const idx = addBtn.getAttribute('data-idx');
+            if (!catId || idx === null) return;
+
+            const prod = productsData[catId] ? productsData[catId][parseInt(idx)] : null;
+            if (!prod) return;
+
+            if (!prod.available) {
+                alert("هذا المنتج غير متوفر");
+                return;
+            }
+
+            const card = addBtn.closest('.product-card-new');
+            if (!card) return;
+
+            const qtySpan = card.querySelector('.qty-value');
+            const sizeSelect = card.querySelector('.size-select');
+            if (!qtySpan || !sizeSelect) return;
+
+            const qty = parseInt(qtySpan.innerText);
+            const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+            const sizeId = selectedOption.value;
+            const selectedSize = sizes.find(s => s.id === sizeId);
+
+            addToCartWithDetails(prod, qty, selectedSize, "");
+        });
+
         window.addEventListener('hashchange', handleRoute);
         window.addEventListener('load', async () => {
-            await loadFromCloud();          // انتظار تحميل البيانات
-            handleRoute();                  // عرض الصفحة المناسبة
-            // إخفاء شاشة التحميل بعد التأكد من اكتمال العرض
+            await loadFromCloud();
+            handleRoute();
             setTimeout(() => {
                 const overlay = document.getElementById('loadingOverlay');
                 if (overlay) {
