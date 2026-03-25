@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
-        /* جميع الأنماط السابقة كما هي دون تغيير، مع إضافة أنماط الخريطة وشاشة التحميل الجديدة */
+        /* جميع الأنماط السابقة كما هي دون تغيير */
         * {
             margin: 0;
             padding: 0;
@@ -866,6 +866,61 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* شاشة إرسال الطلب */
+        .submitting-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(12px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2100;
+            flex-direction: column;
+            gap: 20px;
+            transition: all 0.3s;
+        }
+        .submitting-overlay .submitting-card {
+            background: white;
+            border-radius: 32px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            max-width: 350px;
+            width: 85%;
+            border: 1px solid rgba(147,197,114,0.3);
+            animation: fadeInUp 0.4s ease-out;
+        }
+        .submitting-overlay .submitting-icon {
+            font-size: 4rem;
+            color: #93C572;
+            margin-bottom: 20px;
+            animation: pulseIcon 1.2s infinite;
+        }
+        @keyframes pulseIcon {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .submitting-overlay .submitting-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e2a1f;
+            margin-bottom: 20px;
+        }
+        .submitting-overlay .submitting-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(147,197,114,0.2);
+            border-top: 3px solid #93C572;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
         /* Mobile styles (unchanged) */
         @media (max-width: 640px) {
             header { padding: 10px 12px; }
@@ -898,6 +953,8 @@
             .footer-item { justify-content: center; }
             .status-banner { font-size: 0.8rem; padding: 8px 12px; }
             .map-container img { border-radius: 16px; }
+            .submitting-overlay .submitting-card { padding: 30px 20px; }
+            .submitting-overlay .submitting-text { font-size: 1rem; }
         }
         @media (max-width: 400px) {
             .category-card { height: 45vh; min-height: 240px; }
@@ -925,6 +982,15 @@
             <span></span>
             <span></span>
             <span></span>
+        </div>
+    </div>
+
+    <!-- شاشة إرسال الطلب -->
+    <div id="submittingOverlay" class="submitting-overlay">
+        <div class="submitting-card">
+            <div class="submitting-icon"><i class="fas fa-utensils"></i></div>
+            <div class="submitting-text" id="submittingText">يتم إرسال طلبك إلى المطعم...</div>
+            <div class="submitting-spinner"></div>
         </div>
     </div>
 
@@ -1043,7 +1109,6 @@
             <div class="footer-item" data-action="facebook"><i class="fab fa-facebook-f"></i><span>فيسبوك</span></div>
             <div class="footer-item" data-action="location"><i class="fas fa-map-marker-alt"></i><span>شمس المدينة – بنسليمان – المغرب</span></div>
         </div>
-        <!-- خريطة تفاعلية -->
         <div class="map-container" onclick="window.open('https://maps.app.goo.gl/BQqxtArbwskyQouGA?g_st=aw', '_blank')">
             <img src="https://maps.googleapis.com/maps/api/staticmap?center=33.6344,-7.3803&zoom=15&size=600x200&maptype=roadmap&markers=color:green%7C33.6344,-7.3803&key=AIzaSyC5qZRk2bGxQJbQf5dL1k2V3X4Y5Z6A7B8C" alt="موقع المطعم على الخريطة" style="width:100%; border-radius:20px;">
             <div class="map-caption">📍 اضغط للانتقال إلى الموقع عبر خرائط Google</div>
@@ -1052,7 +1117,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        // JSONBin config (نفس الكود السابق كاملاً، أضفت فقط تعديلات الفوتر وشاشة التحميل)
+        // JSONBin config
         const BIN_ID = '69b99a0aaa77b81da9f2cebf';
         const API_KEY = '$2a$10$HIZoab3tTM/2LPQAVLeK3.1P.PYxBVAFKNpWMtQOcJq/QfC3Z7/le';
         const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
@@ -1851,61 +1916,79 @@
             };
             document.getElementById('checkoutForm').onsubmit = async (e) => {
                 e.preventDefault();
-                const name = document.getElementById('customerName').value;
-                const whatsapp = document.getElementById('customerWhatsapp').value;
-                const method = document.getElementById('deliveryMethod').value;
-                const address = document.getElementById('customerAddress').value;
-                const notes = document.getElementById('orderNotes').value;
-                const orderId = Date.now();
-                const order = {
-                    id: orderId,
-                    customer: { name, whatsapp, address: method === 'delivery' ? address : null },
-                    items: [...cart],
-                    total: cart.reduce((s, i) => s + (i.finalPrice * i.quantity), 0),
-                    status: 'received',
-                    method,
-                    notes,
-                    timestamp: new Date().toISOString(),
-                    estimatedTime: null,
-                    customerLang: currentLang
-                };
-                orders.push(order);
-                await saveOrdersToCloud();
-                cart = [];
-                updateCartUI();
-                document.getElementById('checkoutModal').style.display = 'none';
-                document.getElementById('trackOrderId').innerText = orderId;
-                document.getElementById('trackStatus').innerText = 'تم الاستلام';
-                document.getElementById('notificationMessage').style.display = 'none';
-                document.getElementById('trackingModal').style.display = 'flex';
-                
-                const interval = setInterval(() => {
-                    const updatedOrder = orders.find(o => o.id == orderId);
-                    if (updatedOrder) {
-                        const statusMap = { 'received': 'تم الاستلام', 'preparing': 'قيد التجهيز', 'waiting': 'لم يصل دورك', 'ready': 'جاهز' };
-                        document.getElementById('trackStatus').innerText = statusMap[updatedOrder.status] || updatedOrder.status;
-                        if (updatedOrder.estimatedTime) {
-                            const timeDiv = document.querySelector('#trackingModal .modal-content div:first-of-type');
-                            if (!document.getElementById('estimatedTimeDisplay')) {
-                                const timeDisplay = document.createElement('div');
-                                timeDisplay.id = 'estimatedTimeDisplay';
-                                timeDisplay.style.marginTop = '10px';
-                                timeDisplay.style.padding = '8px';
-                                timeDisplay.style.background = '#e8f5e9';
-                                timeDisplay.style.borderRadius = '20px';
-                                timeDisplay.innerHTML = `⏱️ الوقت المتوقع: ${updatedOrder.estimatedTime} دقيقة`;
-                                timeDiv.parentNode.insertBefore(timeDisplay, timeDiv.nextSibling);
-                            } else {
-                                document.getElementById('estimatedTimeDisplay').innerHTML = `⏱️ الوقت المتوقع: ${updatedOrder.estimatedTime} دقيقة`;
+
+                // إظهار شاشة "يتم إرسال طلبك إلى المطعم..."
+                const submittingOverlay = document.getElementById('submittingOverlay');
+                const submittingText = document.getElementById('submittingText');
+                // تحديث النص حسب اللغة
+                if (currentLang === 'ar') submittingText.innerText = 'يتم إرسال طلبك إلى المطعم...';
+                else if (currentLang === 'fr') submittingText.innerText = 'Envoi de votre commande au restaurant...';
+                else submittingText.innerText = 'Sending your order to the restaurant...';
+                submittingOverlay.style.display = 'flex';
+
+                try {
+                    const name = document.getElementById('customerName').value;
+                    const whatsapp = document.getElementById('customerWhatsapp').value;
+                    const method = document.getElementById('deliveryMethod').value;
+                    const address = document.getElementById('customerAddress').value;
+                    const notes = document.getElementById('orderNotes').value;
+                    const orderId = Date.now();
+                    const order = {
+                        id: orderId,
+                        customer: { name, whatsapp, address: method === 'delivery' ? address : null },
+                        items: [...cart],
+                        total: cart.reduce((s, i) => s + (i.finalPrice * i.quantity), 0),
+                        status: 'received',
+                        method,
+                        notes,
+                        timestamp: new Date().toISOString(),
+                        estimatedTime: null,
+                        customerLang: currentLang
+                    };
+                    orders.push(order);
+                    await saveOrdersToCloud();
+                    cart = [];
+                    updateCartUI();
+                    document.getElementById('checkoutModal').style.display = 'none';
+                    document.getElementById('trackOrderId').innerText = orderId;
+                    document.getElementById('trackStatus').innerText = 'تم الاستلام';
+                    document.getElementById('notificationMessage').style.display = 'none';
+                    document.getElementById('trackingModal').style.display = 'flex';
+                    
+                    const interval = setInterval(() => {
+                        const updatedOrder = orders.find(o => o.id == orderId);
+                        if (updatedOrder) {
+                            const statusMap = { 'received': 'تم الاستلام', 'preparing': 'قيد التجهيز', 'waiting': 'لم يصل دورك', 'ready': 'جاهز' };
+                            document.getElementById('trackStatus').innerText = statusMap[updatedOrder.status] || updatedOrder.status;
+                            if (updatedOrder.estimatedTime) {
+                                const timeDiv = document.querySelector('#trackingModal .modal-content div:first-of-type');
+                                if (!document.getElementById('estimatedTimeDisplay')) {
+                                    const timeDisplay = document.createElement('div');
+                                    timeDisplay.id = 'estimatedTimeDisplay';
+                                    timeDisplay.style.marginTop = '10px';
+                                    timeDisplay.style.padding = '8px';
+                                    timeDisplay.style.background = '#e8f5e9';
+                                    timeDisplay.style.borderRadius = '20px';
+                                    timeDisplay.innerHTML = `⏱️ الوقت المتوقع: ${updatedOrder.estimatedTime} دقيقة`;
+                                    timeDiv.parentNode.insertBefore(timeDisplay, timeDiv.nextSibling);
+                                } else {
+                                    document.getElementById('estimatedTimeDisplay').innerHTML = `⏱️ الوقت المتوقع: ${updatedOrder.estimatedTime} دقيقة`;
+                                }
+                            }
+                            if (updatedOrder.notificationMessage) {
+                                const msgDiv = document.getElementById('notificationMessage');
+                                if (msgDiv) { msgDiv.innerText = updatedOrder.notificationMessage; msgDiv.style.display = 'block'; }
                             }
                         }
-                        if (updatedOrder.notificationMessage) {
-                            const msgDiv = document.getElementById('notificationMessage');
-                            if (msgDiv) { msgDiv.innerText = updatedOrder.notificationMessage; msgDiv.style.display = 'block'; }
-                        }
-                    }
-                }, 5000);
-                window.trackingInterval = interval;
+                    }, 5000);
+                    window.trackingInterval = interval;
+                } catch (error) {
+                    console.error(error);
+                    alert("حدث خطأ أثناء إرسال الطلب، حاول مرة أخرى.");
+                } finally {
+                    // إخفاء شاشة الإرسال بعد اكتمال العملية (بغض النظر عن نجاح أو فشل)
+                    submittingOverlay.style.display = 'none';
+                }
             };
             document.getElementById('closeTracking').onclick = () => {
                 document.getElementById('trackingModal').style.display = 'none';
